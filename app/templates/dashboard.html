@@ -1,0 +1,71 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">📊 Dashboard Overview</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-primary text-white">
+            <div class="card-body text-center">
+                <h5>Total Members</h5>
+                <h2>{{ total_members }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-success text-white">
+            <div class="card-body text-center">
+                <h5>Friday Donations</h5>
+                <h2>₹ {{ "%.2f"|format(friday_total) }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-info text-white">
+            <div class="card-body text-center">
+                <h5>General Contributions</h5>
+                <h2>₹ {{ "%.2f"|format(general_contribution_total) }}</h2>
+            </div>
+        </div>
+    </div> 
+
+    <div class="col-md-3">
+        <div class="card shadow border-0 bg-danger text-white">
+            <div class="card-body text-center">
+                <h5>Imam Salary Contributions</h5>
+                <h2>₹ {{ "%.2f"|format(Imam_salary_contribution_total) }}</h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mt-2">
+
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5>Total Imams</h5>
+                <h2>{{ total_imams }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow border-0">
+            <div class="card-body text-center">
+                <h5>This Month Collection</h5>
+                <h2 class="text-success">
+                    ₹ {{ "%.2f"|format(monthly_total) }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

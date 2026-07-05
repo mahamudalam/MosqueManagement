@@ -1,0 +1,194 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"> Insert Imam Details</h3>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Imam Name</label>
+                        <input type="text"
+                               name="name"
+                               class="form-control"
+                               placeholder="Enter Imam Name"
+                               required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Mobile Number</label>
+                        <input type="text"
+                               name="mobile"
+                               class="form-control"
+                               placeholder="Enter Mobile Number">
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Joining Date</label>
+                        <input type="date"
+                               name="joining_date"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Monthly Salary (₹)</label>
+                        <input type="number"
+                               step="0.01"
+                               name="monthly_salary"
+                               class="form-control"
+                               placeholder="Enter Monthly Salary" required>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <textarea name="address"
+                              rows="3"
+                              class="form-control"
+                              placeholder="Enter Address"></textarea>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Status</label>
+
+                        <select name="status" class="form-select">
+
+                            <option value="Active" selected>
+                                Active
+                            </option>
+
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i>
+                        Save Imam
+                    </button>
+
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Reset
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Imam List</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Mobile</th>
+                        <th>Joining Date</th>
+                        <th>Monthly Salary</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for imam in imams %}
+
+                    <tr>
+
+                        <td>{{ imam.id }}</td>
+
+                        <td>{{ imam.name }}</td>
+
+                        <td>{{ imam.mobile }}</td>
+
+                        <td>{{ imam.joining_date }}</td>
+
+                        <td>₹ {{ "%.2f"|format(imam.monthly_salary) }}</td>
+
+                        <td>
+
+                            {% if imam.status == "Active" %}
+                                <span class="badge bg-success">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    Inactive
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            <a href="{{ url_for('main.edit_imam', id=imam.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{{ url_for('main.delete_imam', id=imam.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            No Imam records found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

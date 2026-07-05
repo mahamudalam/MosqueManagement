@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mosque Admin Panel</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #198754;
+            position: fixed;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #145c32;
+        }
+
+        /* Main content */
+        .main {
+            margin-left: 250px;
+        }
+
+        /* Top navbar */
+        .topbar {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Collapse menu styling */
+        .collapse a {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+
+        .collapse a:hover {
+            background: #145c32;
+        }
+
+        #imamIcon {
+            font-size: 12px;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <h4 class="text-center">🕌 Mosque Admin</h4>
+
+    <a href="/dashboard">Dashboard</a>
+    
+    <!-- Imam Management Dropdown -->
+    <a class="d-flex justify-content-between align-items-center" 
+       data-bs-toggle="collapse" 
+       href="#imamMenu" 
+       role="button" 
+       aria-expanded="false" 
+       aria-controls="imamMenu"
+       style="cursor: pointer;">
+        📋 Imam Management
+        <span id="imamIcon">▼</span>
+    </a>
+    
+    <div class="collapse" id="imamMenu">
+        <a href="/Imam-Details" class="ps-4">➕ Add Imam/Update</a>
+        <a href="/imam-salary-payment" class="ps-4">💰 Imam Salary Pay/Details</a>
+    </div>
+    
+    <a href="#">Reports</a>
+    <a href="/general-contribution">General Contribution</a>
+    <a href="/imam-salary-contribution">Imam Salary Contribution</a>
+    <a href="/members">Members</a>
+    <a href="/add-member">Add Member</a>
+    <a href="{{ url_for('main.friday_donation') }}">Friday Donation</a>
+
+</div>
+
+<!-- MAIN AREA -->
+<div class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar d-flex justify-content-between">
+
+        <div>
+            Welcome, Admin 👋
+        </div>
+
+        <div>
+            <a href="/logout" class="btn btn-sm btn-danger">Logout</a>
+        </div>
+
+    </div>
+
+    <div class="p-4">
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+    
+    <div class="toast align-items-center text-bg-{{ category }} border-0 show"
+         role="alert">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ message }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+</div>
+<script>
+// Handle Imam Management collapse icon rotation
+document.getElementById('imamMenu').addEventListener('show.bs.collapse', function() {
+    document.getElementById('imamIcon').style.transform = 'rotate(180deg)';
+});
+
+document.getElementById('imamMenu').addEventListener('hide.bs.collapse', function() {
+    document.getElementById('imamIcon').style.transform = 'rotate(0deg)';
+});
+
+setTimeout(function () {
+    let toasts = document.querySelectorAll('.toast');
+    toasts.forEach(t => {
+        t.style.display = 'none';
+    });
+}, 3000);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

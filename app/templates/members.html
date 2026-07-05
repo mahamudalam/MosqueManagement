@@ -1,0 +1,42 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+<h2>📋 Members List</h2>
+
+<table class="table table-bordered mt-3">
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Imam Salary Contribution (₹)</th>
+        <th>Address</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for m in members %}
+
+    <tr>
+        <td>{{ m.id }}</td>
+        <td>{{ m.name }}</td>
+        <td>{{ m.phone }}</td>
+        <td>{{ "%.2f"|format(m.imam_salary_contri) }}</td>
+        <td>{{ m.address }}</td>
+        <td>
+
+            <a href="/edit-member/{{ m.id }}" class="btn btn-warning btn-sm">Edit</a>
+
+            <a href="/delete-member/{{ m.id }}" class="btn btn-danger btn-sm"
+               onclick="return confirm('Are you sure?')">
+                Delete
+            </a>
+
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Mosque Management System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+
+body{
+    font-family: 'Segoe UI', sans-serif;
+    background:#f8f9fa;
+}
+
+/* Navbar */
+
+.navbar{
+
+position:absolute;
+
+width:100%;
+
+z-index:999;
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(15px);
+
+padding:3px 0;
+
+}
+
+.logo{
+    width:50px;
+}
+
+.brand-title{
+    font-size:24px;
+    color:#0d5c2d;
+    font-weight:bold;
+}
+
+.brand-sub{
+    font-size:13px;
+    letter-spacing:2px;
+}
+
+/* Hero */
+
+.hero{
+    min-height:100vh;
+    background:url("{{ url_for('static', filename='images/mosque.png') }}") center center;
+    background-size:cover;
+    position:relative;
+}
+
+.hero-overlay{
+
+background:
+linear-gradient(
+90deg,
+rgba(7,35,21,.85) 0%,
+rgba(7,35,21,.70) 40%,
+rgba(0,0,0,.25) 100%
+);
+
+min-height:100vh;
+
+display:flex;
+
+align-items:center;
+
+}
+
+.hero h1{
+
+font-size:70px;
+
+font-weight:bold;
+
+}
+
+.hero p{
+
+font-size:22px;
+
+color:white;
+
+max-width:600px;
+
+}
+
+.prayer-card{
+
+border:none;
+
+border-radius:25px;
+
+background:rgba(255,255,255,.95);
+
+backdrop-filter:blur(25px);
+
+box-shadow:
+
+0 25px 50px rgba(0,0,0,.25);
+
+padding:25px;
+
+}
+
+.prayer-card table tr{
+
+border-bottom:1px solid #ececec;
+
+}
+
+.prayer-card table tr:last-child{
+
+border:none;
+
+}
+
+.prayer-card td{
+
+padding:16px 0;
+
+font-size:17px;
+
+}
+
+.prayer-card h4{
+
+color:#145c32;
+
+font-weight:bold;
+
+}
+
+/* Buttons */
+
+.btn-main{
+    background:#198754;
+    color:white;
+    padding:14px 30px;
+    border-radius:8px;
+    font-size:18px;
+}
+
+.btn-main:hover{
+    background:#146c43;
+    color:white;
+}
+
+.btn-outline-success{
+    padding:14px 30px;
+}
+
+/* Feature Cards */
+
+.section-title{
+    text-align:center;
+    margin-top:80px;
+    margin-bottom:50px;
+    font-weight:bold;
+    color:#145c32;
+}
+
+.feature-card{
+    border:none;
+    border-radius:18px;
+    transition:.3s;
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+}
+
+.icon-circle{
+    width:70px;
+    height:70px;
+    background:#dff5e7;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+    font-size:30px;
+    color:#198754;
+}
+
+footer{
+    background:#145c32;
+    color:white;
+    margin-top:80px;
+    padding:30px;
+    text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container">
+
+<a class="navbar-brand d-flex align-items-center" href="#">
+
+<img src="{{ url_for('static', filename='images/logo.png') }}" class="logo me-3">
+
+<div>
+
+<div class="brand-title">MOSQUE</div>
+
+<!-- <div class="brand-sub">MANAGEMENT SYSTEM</div> -->
+<div class="brand-sub">DURGA NAGAR</div>
+
+</div>
+
+</a>
+
+<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+
+<span class="navbar-toggler-icon"></span>
+
+</button>
+
+<div class="collapse navbar-collapse" id="menu">
+
+<ul class="navbar-nav ms-auto">
+
+<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+
+<li class="nav-item"><a class="nav-link" href="#">About</a></li>
+
+<!-- <li class="nav-item"><a class="nav-link" href="#">Features</a></li> -->
+
+<!-- <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li> -->
+
+<li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+
+</ul>
+
+<a href="{{ url_for('main.login') }}" class="btn btn-success ms-4">
+
+<i class="bi bi-person-fill"></i>
+
+Admin Login
+
+</a>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- HERO -->
+
+<<!-- HERO -->
+
+<section class="hero">
+
+<div class="hero-overlay">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-7 text-white">
+
+<h5 class="text-warning mb-3">
+
+السلام عليكم
+
+</h5>
+
+<h1 class="display-2 fw-bold">
+
+Welcome to<br>
+
+<span class="text-white">
+
+Durga Nagar Mosque
+
+</span>
+
+</h1>
+
+<p class="lead mt-4">
+
+Manage members, Friday collections, Imam salary,
+monthly reports and donations in one place.
+
+</p>
+
+<div class="mt-4">
+
+<a href="#" class="btn btn-success btn-lg me-3">
+
+About Mosque
+
+</a>
+
+<a href="#" class="btn btn-light btn-lg">
+
+Contact
+
+</a>
+
+</div>
+
+</div>
+
+<div class="col-lg-5">
+
+<div class="card prayer-card shadow-lg">
+
+<div class="card-body">
+
+<h4 class="mb-3">
+
+Today's Prayer Times
+
+</h4>
+
+<table class="table">
+
+<tr>
+
+<td>🌅 Fajr</td>
+
+<td class="text-end">05:01 AM</td>
+
+</tr>
+
+<tr>
+
+<td>☀ Dhuhr</td>
+
+<td class="text-end">12:20 PM</td>
+
+</tr>
+
+<tr>
+
+<td>🌤 Asr</td>
+
+<td class="text-end">04:15 PM</td>
+
+</tr>
+
+<tr>
+
+<td>🌇 Maghrib</td>
+
+<td class="text-end">06:55 PM</td>
+
+</tr>
+
+<tr>
+
+<td>🌙 Isha</td>
+
+<td class="text-end">08:10 PM</td>
+
+</tr>
+
+</table>
+
+<a href="#" class="btn btn-success w-100">
+
+View Full Timetable
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FEATURES -->
+<!-- REPORTS DASHBOARD -->
+
+<div class="container py-5">
+
+    <h2 class="section-title">
+        📊 Reports Dashboard
+    </h2>
+
+    <div class="row justify-content-center">
+
+        <!-- Friday Donation Report -->
+        <div class="col-lg-5 col-md-6 mb-4">
+
+            <div class="card shadow feature-card h-100">
+
+                <div class="card-body text-center p-4">
+
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+
+                    <h4 class="mb-3">Friday Donation Report</h4>
+
+                    <p class="text-muted">
+                        View monthly Friday donation collections and member-wise contribution reports.
+                    </p>
+
+                    <a href="{{ url_for('main.friday_report') }}"
+                       class="btn btn-success w-100">
+                        <i class="bi bi-file-earmark-text"></i>
+                        Open Report
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Imam Salary Report -->
+        <div class="col-lg-5 col-md-6 mb-4">
+
+            <div class="card shadow feature-card h-100">
+
+                <div class="card-body text-center p-4">
+
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+
+                    <h4 class="mb-3">Imam Salary Contribution Report</h4>
+
+                    <p class="text-muted">
+                        View monthly Imam salary contribution details and payment history.
+                    </p>
+
+                    <a href="{{ url_for('main.imam_salary_contribution_report') }}"
+                       class="btn btn-primary w-100">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                        Open Report
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+<h4>
+
+"And establish prayer and give zakah..."
+
+</h4>
+
+<p>
+
+Quran 2:43
+
+</p>
+
+<p>
+
+© 2026 Mosque Management System
+
+</p>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
