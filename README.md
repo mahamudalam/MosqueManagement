@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 Then activate venv:
 --venv\Scripts\activate
@@ -91,3 +92,7 @@ INSERT INTO prayer_time (prayer_name, prayer_time,display_order) VALUES
 ('Maghrib', '18:45',4),
 ('Isha', '20:00',5),
 ('Jumma', '13:10',6);
+=======
+# masjid_management_app
+This is masjid management app
+>>>>>>> 3dc6162a03ef8b4067273b151bd3a784468d61c2
