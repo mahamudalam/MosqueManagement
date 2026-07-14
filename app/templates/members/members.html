@@ -12,7 +12,10 @@
         <th>Phone</th>
         <th>Imam Salary Contribution (₹)</th>
         <th>Address</th>
-        <th>Actions</th>
+
+        {% if current_user.role != 'Committee Member' %}
+            <th>Actions</th>
+        {% endif %}
     </tr>
 
     {% for m in members %}
@@ -23,16 +26,21 @@
         <td>{{ m.phone }}</td>
         <td>{{ "%.2f"|format(m.imam_salary_contri) }}</td>
         <td>{{ m.address }}</td>
+
+        {% if current_user.role != 'Committee Member' %}
         <td>
+            <a href="/edit-member/{{ m.id }}" class="btn btn-warning btn-sm">
+                Edit
+            </a>
 
-            <a href="/edit-member/{{ m.id }}" class="btn btn-warning btn-sm">Edit</a>
-
-            <a href="/delete-member/{{ m.id }}" class="btn btn-danger btn-sm"
+            <a href="/delete-member/{{ m.id }}"
+               class="btn btn-danger btn-sm"
                onclick="return confirm('Are you sure?')">
                 Delete
             </a>
-
         </td>
+        {% endif %}
+
     </tr>
 
     {% endfor %}

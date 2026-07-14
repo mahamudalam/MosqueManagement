@@ -1,0 +1,178 @@
+
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Edit Expense</h4>
+
+            <a href="{{ url_for('expense.expense_list') }}" class="btn btn-secondary btn-sm">
+                Back
+            </a>
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Expense Date</label>
+
+                        <input
+                            type="date"
+                            name="expense_date"
+                            class="form-control"
+                            value="{{ expense.expense_date.strftime('%Y-%m-%d') }}"
+                            required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Category</label>
+
+                        <select
+                            name="category"
+                            class="form-select"
+                            required>
+
+                            <option value="Electricity"
+                                {% if expense.category == 'Electricity' %}selected{% endif %}>
+                                Electricity
+                            </option>
+
+                            <option value="Water"
+                                {% if expense.category == 'Water' %}selected{% endif %}>
+                                Water
+                            </option>
+
+                            <option value="Maintenance"
+                                {% if expense.category == 'Maintenance' %}selected{% endif %}>
+                                Maintenance
+                            </option>
+
+                            <option value="Cleaning"
+                                {% if expense.category == 'Cleaning' %}selected{% endif %}>
+                                Cleaning
+                            </option>
+
+                            <option value="Repair"
+                                {% if expense.category == 'Repair' %}selected{% endif %}>
+                                Repair
+                            </option>
+
+                            <option value="Stationery"
+                                {% if expense.category == 'Stationery' %}selected{% endif %}>
+                                Stationery
+                            </option>
+
+                            <option value="Miscellaneous"
+                                {% if expense.category == 'Miscellaneous' %}selected{% endif %}>
+                                Miscellaneous
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Amount (₹)</label>
+
+                        <input
+                            type="number"
+                            name="amount"
+                            step="0.01"
+                            class="form-control"
+                            value="{{ expense.amount }}"
+                            required>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+
+                    <textarea
+                        name="description"
+                        rows="3"
+                        class="form-control">{{ expense.description or '' }}</textarea>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Paid To</label>
+
+                        <input
+                            type="text"
+                            name="paid_to"
+                            class="form-control"
+                            value="{{ expense.paid_to or '' }}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Payment Mode</label>
+
+                        <select
+                            name="payment_mode"
+                            class="form-select">
+
+                            <option value="Cash"
+                                {% if expense.payment_mode == 'Cash' %}selected{% endif %}>
+                                Cash
+                            </option>
+
+                            <option value="UPI"
+                                {% if expense.payment_mode == 'UPI' %}selected{% endif %}>
+                                UPI
+                            </option>
+
+                            <option value="Bank Transfer"
+                                {% if expense.payment_mode == 'Bank Transfer' %}selected{% endif %}>
+                                Bank Transfer
+                            </option>
+
+                            <option value="Cheque"
+                                {% if expense.payment_mode == 'Cheque' %}selected{% endif %}>
+                                Cheque
+                            </option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Remarks</label>
+
+                    <textarea
+                        name="remarks"
+                        rows="3"
+                        class="form-control">{{ expense.remarks or '' }}</textarea>
+                </div>
+
+                <div class="text-end">
+
+                    <a href="{{ url_for('expense.expense_list') }}" class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-success">
+                        Update Expense
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

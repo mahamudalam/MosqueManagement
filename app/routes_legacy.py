@@ -644,3 +644,46 @@ def dashboard():
         monthly_total=monthly_total,
         general_contribution_total=general_contribution_total
     )
+
+
+# -----------------------
+# user create route
+# -----------------------
+@main.route("/users/create", methods=["GET", "POST"])
+@login_required
+def create_user():
+
+    if current_user.role != "Admin":
+        flash("Access Denied", "danger")
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+
+        fullname = request.form["fullname"]
+        username = request.form["username"]
+        password = request.form["password"]
+        role = request.form["role"]
+        status = request.form["status"]
+
+        existing = Admin.query.filter_by(username=username).first()
+
+        if existing:
+            flash("Username already exists", "danger")
+            return redirect(url_for("create_user"))
+
+        user = Admin(
+            fullname=fullname,
+            username=username,
+            role=role,
+            status=status
+        )
+
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash("User created successfully.", "success")
+        return redirect(url_for("users"))
+
+    return render_template("create_user.html")

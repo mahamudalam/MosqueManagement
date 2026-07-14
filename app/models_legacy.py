@@ -12,14 +12,24 @@ class Admin(UserMixin, db.Model):
     __tablename__ = "admin"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+
+    fullname = db.Column(db.String(100), nullable=False)
+
+    username = db.Column(db.String(50), unique=True, nullable=False)
+
+    password_hash = db.Column(db.String(255))
+
+    role = db.Column(db.String(30), default="Committee Member")
+
+    status = db.Column(db.String(20), default="Active")
+
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return check_password_hash(self.password_hash, password)
 
 
 # Flask-Login loader
@@ -162,3 +172,6 @@ class GeneralContribution(db.Model):
 
     remarks = db.Column(db.String(200))
 
+
+
+    

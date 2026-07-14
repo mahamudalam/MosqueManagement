@@ -1,23 +1,10 @@
-# Virtual Environment
 venv/
-
-# Python
 __pycache__/
 *.py[cod]
-
-# Flask
-#instance/
-
-# Environment Variables
+*.db
+*.sqlite3
 .env
-
-# VS Code
+instance/
 .vscode/
-
-# SQLite Database (remove this if you WANT to keep your database in Git)
-#*.db
-#*.sqlite3
-
-# OS files
 Thumbs.db
 .DS_Store

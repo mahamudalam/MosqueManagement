@@ -29,7 +29,7 @@ width:100%;
 
 z-index:999;
 
-background:rgba(255,255,255,.08);
+background:rgba(196, 211, 196, 0.74);
 
 backdrop-filter:blur(15px);
 
@@ -43,12 +43,12 @@ padding:3px 0;
 
 .brand-title{
     font-size:24px;
-    color:#0d5c2d;
+    color:#ebde68;
     font-weight:bold;
 }
 
 .brand-sub{
-    font-size:13px;
+    font-size:14px;
     letter-spacing:2px;
 }
 
@@ -221,7 +221,7 @@ footer{
 
 <div>
 
-<div class="brand-title">MOSQUE</div>
+<div class="brand-title">MASJID</div>
 
 <!-- <div class="brand-sub">MANAGEMENT SYSTEM</div> -->
 <div class="brand-sub">DURGA NAGAR</div>
@@ -248,17 +248,13 @@ footer{
 
 <!-- <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li> -->
 
-<li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+<li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
 
 </ul>
 
-<a href="{{ url_for('main.login') }}" class="btn btn-success ms-4">
+<a href="{{ url_for('auth.login') }}" class="btn btn-success ms-4">
 
-<i class="bi bi-person-fill"></i>
-
-Admin Login
-
-</a>
+<i class="bi bi-person-fill"></i> Login</a>
 
 </div>
 
@@ -268,7 +264,7 @@ Admin Login
 
 <!-- HERO -->
 
-<<!-- HERO -->
+<!-- HERO -->
 
 <section class="hero">
 
@@ -292,7 +288,7 @@ Welcome to<br>
 
 <span class="text-white">
 
-Durga Nagar Mosque
+Durga Nagar Masjid
 
 </span>
 
@@ -307,83 +303,61 @@ monthly reports and donations in one place.
 
 <div class="mt-4">
 
-<a href="#" class="btn btn-success btn-lg me-3">
+<!--<a href="#" class="btn btn-success btn-lg me-3">About Mosque</a>-->
 
-About Mosque
-
-</a>
-
-<a href="#" class="btn btn-light btn-lg">
-
-Contact
-
-</a>
+<!--<a href="#" class="btn btn-light btn-lg">Contact</a> -->
 
 </div>
 
 </div>
 
-<div class="col-lg-5">
-
+<div class="col-lg-4 offset-lg-1">
 <div class="card prayer-card shadow-lg">
-
 <div class="card-body">
 
-<h4 class="mb-3">
-
-Today's Prayer Times
-
-</h4>
-
+<h4 class="mb-3">Today's Prayer Times</h4>
 <table class="table">
 
-<tr>
-
-<td>🌅 Fajr</td>
-
-<td class="text-end">05:01 AM</td>
-
-</tr>
+{% for prayer in prayers %}
 
 <tr>
 
-<td>☀ Dhuhr</td>
+<td>
 
-<td class="text-end">12:20 PM</td>
+{% if prayer.prayer_name=="Fajr" %}
+🌅
+{% elif prayer.prayer_name=="Dhuhr" %}
+☀
+{% elif prayer.prayer_name=="Asr" %}
+🌤
+{% elif prayer.prayer_name=="Maghrib" %}
+🌇
+{% elif prayer.prayer_name=="Isha" %}
+🌙
+{% elif prayer.prayer_name == "Jumma" %}
+     <span class="badge bg-success fs-6">
+        🕌 {{ prayer.prayer_name }}
+    </span>
+{% endif %}
+
+
+{{ prayer.prayer_name }}
+
+</td>
+
+<td class="text-end">
+
+{{ prayer.prayer_time.strftime('%I:%M %p') }}
+
+</td>
 
 </tr>
 
-<tr>
-
-<td>🌤 Asr</td>
-
-<td class="text-end">04:15 PM</td>
-
-</tr>
-
-<tr>
-
-<td>🌇 Maghrib</td>
-
-<td class="text-end">06:55 PM</td>
-
-</tr>
-
-<tr>
-
-<td>🌙 Isha</td>
-
-<td class="text-end">08:10 PM</td>
-
-</tr>
+{% endfor %}
 
 </table>
 
-<a href="#" class="btn btn-success w-100">
-
-View Full Timetable
-
-</a>
+<!--<a href="#" class="btn btn-success w-100">View Full Timetable </a>-->
 
 </div>
 
@@ -427,7 +401,7 @@ View Full Timetable
                         View monthly Friday donation collections and member-wise contribution reports.
                     </p>
 
-                    <a href="{{ url_for('main.friday_report') }}"
+                    <a href="{{ url_for('reports.friday_report') }}"
                        class="btn btn-success w-100">
                         <i class="bi bi-file-earmark-text"></i>
                         Open Report
@@ -456,7 +430,7 @@ View Full Timetable
                         View monthly Imam salary contribution details and payment history.
                     </p>
 
-                    <a href="{{ url_for('main.imam_salary_contribution_report') }}"
+                    <a href="{{ url_for('reports.imam_salary_contribution_report') }}"
                        class="btn btn-primary w-100">
                         <i class="bi bi-file-earmark-bar-graph"></i>
                         Open Report
@@ -478,7 +452,7 @@ View Full Timetable
 
 <h4>
 
-"And establish prayer and give zakah..."
+"Establish prayer and give zakah..."
 
 </h4>
 
@@ -490,8 +464,7 @@ Quran 2:43
 
 <p>
 
-© 2026 Mosque Management System
-
+© 2026 Durga Nagar Masjid (Developed By Alam )
 </p>
 
 </footer>
