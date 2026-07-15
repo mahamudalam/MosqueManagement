@@ -145,3 +145,17 @@ body{
     width:100%;
 
 }
+
+.topbar {
+    border-left: 4px solid #198754; /* Green accent */
+    min-height: 70px;
+}
+
+.topbar strong {
+    font-size: 1rem;
+}
+
+.topbar small {
+    font-size: 0.8rem;
+}
+
