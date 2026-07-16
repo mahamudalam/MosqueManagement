@@ -152,3 +152,28 @@ def create_user():
         return redirect(url_for("dashboard.users"))
 
     return render_template("dashboard/create_user.html")
+
+# ==========================================
+# Edit/ Delete user
+# ==========================================
+
+@dashboard_bp.route("/users/delete/<int:id>", methods=["POST"])
+@login_required
+def delete_user(id):
+    user = Admin.query.get_or_404(id)
+
+    # Prevent deleting yourself
+    if user.id == current_user.id:
+        flash("You cannot delete your own account.", "warning")
+        return redirect(url_for("dashboard.users"))
+
+    # Prevent deleting default admin
+    if user.username.lower() == "admin":
+        flash("Default admin user cannot be deleted.", "danger")
+        return redirect(url_for("dashboard.users"))
+
+    db.session.delete(user)
+    db.session.commit()
+
+    flash("User deleted successfully.", "success")
+    return redirect(url_for("dashboard.users"))

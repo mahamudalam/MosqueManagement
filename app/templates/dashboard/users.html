@@ -5,107 +5,162 @@
 
 <div class="container mt-4">
 
-<div class="d-flex justify-content-between align-items-center">
+    <!-- Header -->
+    <div class="card shadow mb-4">
 
-<h2>User Management</h2>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">
+                <i class="bi bi-people-fill me-2"></i>User Management
+            </h3>
 
-<a href="/users/create" class="btn btn-success">
-+ New User
-</a>
+            <a href="/users/create" class="btn btn-light btn-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> New User
+            </a>
+        </div>
 
-</div>
+        <div class="card-body">
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<div class="mt-3">
-{% for category, message in messages %}
-<div class="alert alert-{{ category }}">{{ message }}</div>
-{% endfor %}
-</div>
-{% endif %}
-{% endwith %}
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-{% if users %}
-<div class="card border-info shadow-sm mt-3">
-<div class="card-body">
-<h5 class="card-title">Latest User Details</h5>
-{% set latest_user = users[0] %}
-<div class="row">
-<div class="col-md-3"><strong>Full Name:</strong> {{ latest_user.fullname }}</div>
-<div class="col-md-3"><strong>Username:</strong> {{ latest_user.username }}</div>
-<div class="col-md-2"><strong>Role:</strong> {{ latest_user.role }}</div>
-<div class="col-md-2"><strong>Status:</strong> {{ latest_user.status }}</div>
-<div class="col-md-2"><strong>Created:</strong> {{ latest_user.created_date.strftime('%d-%m-%Y') if latest_user.created_date else 'N/A' }}</div>
-</div>
-</div>
-</div>
-{% endif %}
+            <!-- Latest User -->
+            {% if users %}
+            <div class="card border-info shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <strong>Latest User Details</strong>
+                </div>
 
-<hr>
+                <div class="card-body">
 
-<table class="table table-bordered table-hover">
+                    {% set latest_user = users[0] %}
 
-<thead class="table-dark">
+                    <div class="row">
 
-<tr>
+                        <div class="col-md-3">
+                            <strong>Full Name</strong><br>
+                            {{ latest_user.fullname }}
+                        </div>
 
-<th>ID</th>
+                        <div class="col-md-3">
+                            <strong>Username</strong><br>
+                            {{ latest_user.username }}
+                        </div>
 
-<th>Full Name</th>
+                        <div class="col-md-2">
+                            <strong>Role</strong><br>
+                            {{ latest_user.role }}
+                        </div>
 
-<th>Username</th>
+                        <div class="col-md-2">
+                            <strong>Status</strong><br>
 
-<th>Role</th>
+                            {% if latest_user.status=="Active" %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </div>
 
-<th>Status</th>
+                        <div class="col-md-2">
+                            <strong>Created</strong><br>
+                            {{ latest_user.created_date.strftime('%d-%m-%Y') if latest_user.created_date else 'N/A' }}
+                        </div>
 
-<th>Created</th>
+                    </div>
 
-</tr>
+                </div>
+            </div>
+            {% endif %}
 
-</thead>
+            <!-- User Table -->
+            <div class="table-responsive">
 
-<tbody>
+                <table class="table table-bordered table-hover align-middle">
 
-{% for user in users %}
+                    <thead class="table-dark">
 
-<tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th width="180">Action</th>
+                        </tr>
 
-<td>{{ user.id }}</td>
+                    </thead>
 
-<td>{{ user.fullname }}</td>
+                    <tbody>
 
-<td>{{ user.username }}</td>
+                        {% for user in users %}
 
-<td>{{ user.role }}</td>
+                        <tr>
 
-<td>
+                            <td>{{ user.id }}</td>
 
-{% if user.status=="Active" %}
+                            <td>{{ user.fullname }}</td>
 
-<span class="badge bg-success">
-Active
-</span>
+                            <td>{{ user.username }}</td>
 
-{% else %}
+                            <td>{{ user.role }}</td>
 
-<span class="badge bg-danger">
-Inactive
-</span>
+                            <td>
 
-{% endif %}
+                                {% if user.status=="Active" %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
 
-</td>
+                            </td>
 
-<td>{{ user.created_date.strftime('%d-%m-%Y') if user.created_date else 'N/A' }}</td>
+                            <td>
+                                {{ user.created_date.strftime('%d-%m-%Y') if user.created_date else 'N/A' }}
+                            </td>
 
-</tr>
+                            <td>
 
-{% endfor %}
+                                {% if user.username != 'admin' %}
 
-</tbody>
+                                <form action="/users/delete/{{ user.id }}"
+                                      method="POST"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete this user?');">
 
-</table>
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
