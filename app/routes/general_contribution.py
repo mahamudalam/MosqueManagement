@@ -29,4 +29,4 @@ def general_contribution():
         return redirect(url_for("general_contribution.general_contribution"))
 
     contributions = GeneralContribution.query.order_by(GeneralContribution.id.desc()).limit(50).all()
-    return render_template("donation/general_contribution.html", contributions=contributions)
+    return render_template("donation/General_contribution.html", contributions=contributions)

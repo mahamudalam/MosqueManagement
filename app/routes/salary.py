@@ -52,7 +52,7 @@ def imam_salary():
     total_amount = sum(c.amount for c in contributions)
 
     return render_template(
-        "salary/imam_salary_contribution.html",
+        "salary/Imam_salary_contribution.html",
         members=members,
         contributions=contributions,
         total_amount=total_amount,
