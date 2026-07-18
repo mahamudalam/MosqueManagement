@@ -93,26 +93,32 @@
     {% endif %}
 
     {% if current_user.is_authenticated and current_user.role in ['Admin', 'Committee Member'] %}
-    <a href="#">Reports</a>
-    <a href="/friday-donation">Friday Contribution</a>
-    <a href="/general-contribution">General Contribution</a>
-    <a href="/imam-salary-contribution">Imam Salary Contribution</a>
-    <a href="/expense/add">Expense Management</a>
-    <a href="/members">Members</a>
-    <a href="/add-member">Add Member</a>
-    <a href="/prayer-times">Prayer Time</a>
-    <a href="/admin/contact-requests">Contact US Requests</a>
+    <!---<a href="#">Reports</a>-->
+    <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('reports.reports') }}">
+        <!--<i class="fa fa-file-pdf"></i>-->
+        Reports
+    </a>
+    </li>
+    <a class="nav-link" href="/friday-donation">Friday Contribution</a>
+    <a class="nav-link" href="/general-contribution">General Contribution</a>
+    <a class="nav-link" href="/imam-salary-contribution">Imam Salary Contribution</a>
+    <a class="nav-link" href="/expense/add">Expense Management</a>
+    <a class="nav-link" href="/members">Members</a>
+    <a class="nav-link" href="/add-member">Add Member</a>
+    <a class="nav-link" href="/prayer-times">Prayer Time</a>
+    <a class="nav-link" href="/admin/contact-requests">Contact US Requests</a>
 
 
     
     {% endif %}
 
     {% if current_user.is_authenticated and current_user.role == 'Admin' %}
-    <a href="{{ url_for('dashboard.create_user') }}">User Management</a>
+    <a class="nav-link" href="{{ url_for('dashboard.create_user') }}">User Management</a>
     {% endif %}
 
     {% if current_user.is_authenticated and current_user.role == 'Imam' %}
-    <a href="/prayer-times">Prayer Time</a>
+    <a class="nav-link" href="/prayer-times">Prayer Time</a>
     {% endif %}
     
 

@@ -1,52 +1,184 @@
-{% extends 'base_admin.html' %}
+{% extends "base_admin.html" %}
 
 {% block content %}
 
 {% include "base.html" %}
 
-<h2>📋 Members List</h2>
+<div class="container py-4">
 
-<table class="table table-bordered mt-3">
+    <!-- Page Header -->
+    <div class="card shadow-sm border-0 mb-4">
 
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Imam Salary Contribution (₹)</th>
-        <th>Address</th>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
 
-        {% if current_user.role != 'Committee Member' %}
-            <th>Actions</th>
-        {% endif %}
-    </tr>
+            <h3 class="mb-0">
+                <i class="fa fa-users me-2"></i>
+                Members List
+            </h3>
 
-    {% for m in members %}
+            <span class="badge bg-light text-primary fs-6">
+                Total: {{ members|length }}
+            </span>
 
-    <tr>
-        <td>{{ m.id }}</td>
-        <td>{{ m.name }}</td>
-        <td>{{ m.phone }}</td>
-        <td>{{ "%.2f"|format(m.imam_salary_contri) }}</td>
-        <td>{{ m.address }}</td>
+        </div>
 
-        {% if current_user.role != 'Committee Member' %}
-        <td>
-            <a href="/edit-member/{{ m.id }}" class="btn btn-warning btn-sm">
-                Edit
-            </a>
+    </div>
 
-            <a href="/delete-member/{{ m.id }}"
-               class="btn btn-danger btn-sm"
-               onclick="return confirm('Are you sure?')">
-                Delete
-            </a>
-        </td>
-        {% endif %}
+    <!-- Search -->
+    <div class="card shadow-sm border-0 mb-4">
 
-    </tr>
+        <div class="card-body">
 
-    {% endfor %}
+            <div class="row">
 
-</table>
+                <div class="col-md-6">
+
+                    <input type="text"
+                           id="memberSearch"
+                           class="form-control"
+                           placeholder="🔍 Search member by name or phone...">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Members Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover table-bordered align-middle" id="memberTable">
+
+                    <thead class="table-primary">
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Name</th>
+
+                            <th>Phone</th>
+
+                            <th>Contribution (₹)</th>
+
+                            <th>Address</th>
+
+                            {% if current_user.role != 'Committee Member' %}
+                            <th class="text-center">
+                                Actions
+                            </th>
+                            {% endif %}
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% if members %}
+
+                        {% for m in members %}
+
+                        <tr>
+
+                            <td>{{ m.id }}</td>
+
+                            <td class="fw-semibold">
+                                {{ m.name }}
+                            </td>
+
+                            <td>{{ m.phone or "-" }}</td>
+
+                            <td>
+                                ₹ {{ "{:,.2f}".format(m.imam_salary_contri) }}
+                            </td>
+
+                            <td>{{ m.address or "-" }}</td>
+
+                            {% if current_user.role != 'Committee Member' %}
+
+                            <td class="text-center">
+
+                                <a href="/edit-member/{{ m.id }}"
+                                   class="btn btn-warning btn-sm mb-1">
+
+                                    <i class="fa fa-edit"></i>
+                                    Edit
+
+                                </a>
+
+                                <a href="/delete-member/{{ m.id }}"
+                                   class="btn btn-danger btn-sm mb-1"
+                                   onclick="return confirm('Are you sure you want to delete this member?')">
+
+                                    <i class="fa fa-trash"></i>
+                                    Delete
+
+                                </a>
+
+                            </td>
+
+                            {% endif %}
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="{% if current_user.role != 'Committee Member' %}6{% else %}5{% endif %}"
+                                class="text-center text-muted py-4">
+
+                                <i class="fa fa-users fa-2x mb-2"></i>
+                                <br>
+
+                                No members found.
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Search Script -->
+<script>
+
+document.getElementById("memberSearch").addEventListener("keyup", function () {
+
+    let filter = this.value.toLowerCase();
+
+    let rows = document.querySelectorAll("#memberTable tbody tr");
+
+    rows.forEach(function (row) {
+
+        row.style.display = row.innerText.toLowerCase().includes(filter)
+            ? ""
+            : "none";
+
+    });
+
+});
+
+</script>
 
 {% endblock %}

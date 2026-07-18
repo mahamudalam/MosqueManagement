@@ -14,7 +14,8 @@ from app.models import (
     Admin,
     PrayerTime,
     ImamSalaryPayment,
-    Expense
+    Expense,
+    MonthlyReport
 )
 from app.routes.access import role_required
 
@@ -91,9 +92,17 @@ def dashboard():
 
     )
 
+            
+    Last_month_total_save = (
+        db.session.query(MonthlyReport.ClosingBalance)
+        .order_by(MonthlyReport.report_id.desc())
+        .limit(1)
+        .scalar()
+    ) or 0
+
     monthly_expense = Total_expense + imam_salary_pay
 
-    monthly_total = friday_total + general_contribution_total + imam_salary_contribution_total
+    monthly_total = friday_total + general_contribution_total + imam_salary_contribution_total 
 
     current_month_year = today.strftime("%B %Y")
 
@@ -107,7 +116,7 @@ def dashboard():
         general_contribution_total=general_contribution_total,
         current_month_year=current_month_year,
         monthly_expense=monthly_expense,
-        remaining_balance=monthly_total - monthly_expense,
+        remaining_balance=(monthly_total + Last_month_total_save) - monthly_expense,
     )
 
 
@@ -115,6 +124,7 @@ def dashboard():
 @login_required
 @role_required("Admin")
 def users():
+
     users = Admin.query.order_by(Admin.created_date.desc()).all()
     return render_template("dashboard/users.html", users=users)
 

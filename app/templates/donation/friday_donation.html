@@ -1,139 +1,267 @@
-{% extends 'base_admin.html' %}
+{% extends "base_admin.html" %}
 
 {% block content %}
 
 {% include "base.html" %}
 
-<h2 class="mb-4">🕌 Friday Donation</h2>
+<div class="container py-4">
 
-<div class="card shadow p-4 mb-5">
+    <!-- Page Header -->
+    <div class="card shadow-sm border-0 mb-4">
 
-<form method="POST">
+        <div class="card-header bg-primary text-white">
 
-<div class="row">
+            <h3 class="mb-0">
+                <i class="fa fa-hand-holding-heart me-2"></i>
+                Friday Contribution
+            </h3>
 
-<div class="col-md-4">
+        </div>
 
-<label>Member</label>
+    </div>
 
-<select class="form-control" name="member_id" required>
+    <!-- Donation Entry Form -->
+    <div class="card shadow-sm border-0 mb-4">
 
-<option value="">Select Member</option>
+        <div class="card-header bg-success text-white">
 
-{% for member in members %}
+            <i class="fa fa-plus-circle me-2"></i>
 
-<option value="{{ member.id }}">
-    {{ member.name }}
-</option>
+            Add Friday Contribution
 
-{% endfor %}
+        </div>
 
-</select>
+        <div class="card-body">
+
+            <form method="POST">
+
+                <div class="row">
+
+                    <!-- Member -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Member
+                        </label>
+
+                        <select class="form-select"
+                                name="member_id"
+                                required>
+
+                            <option value="">
+                                Select Member
+                            </option>
+
+                            {% for member in members %}
+
+                            <option value="{{ member.id }}">
+                                {{ member.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Friday -->
+                    <div class="col-lg-3 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Friday Date
+                        </label>
+
+                        <select class="form-select"
+                                name="donation_date"
+                                required>
+
+                            <option value="">
+                                Select Friday
+                            </option>
+
+                            {% for friday in fridays %}
+
+                            <option value="{{ friday }}">
+                                {{ friday.strftime('%d-%b-%Y') }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="col-lg-3 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Amount (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="1"
+                            name="amount"
+                            class="form-control"
+                            placeholder="Enter amount"
+                            required>
+
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="col-lg-2 col-md-6 col-12 d-grid mb-3">
+
+                        <label class="form-label">&nbsp;</label>
+
+                        <button class="btn btn-success">
+
+                            <i class="fa fa-save me-1"></i>
+
+                            Save
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-12">
+
+                        <label class="form-label fw-bold">
+
+                            Remarks
+
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            rows="3"
+                            name="remarks"
+                            placeholder="Enter remarks (optional)"></textarea>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Donation History -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+
+            <span>
+
+                <i class="fa fa-history me-2"></i>
+
+                Contribution History
+
+            </span>
+
+            <span class="badge bg-light text-primary">
+
+                Total Records : {{ donations|length }}
+
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover table-bordered align-middle">
+
+                    <thead class="table-primary">
+
+                        <tr>
+
+                            <th>Date</th>
+
+                            <th>Member</th>
+
+                            <th class="text-end">
+                                Amount
+                            </th>
+
+                            <th>Remarks</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if donations %}
+
+                            {% for d in donations %}
+
+                            <tr>
+
+                                <td>
+
+                                    {{ d.donation_date.strftime('%d-%b-%Y') if d.donation_date else '' }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ d.member.name }}
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    ₹ {{ "{:,.2f}".format(d.amount) }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ d.remarks or "-" }}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="text-center text-muted py-4">
+
+                                    <i class="fa fa-inbox fa-2x mb-2"></i>
+
+                                    <br>
+
+                                    No Contribution records found.
+
+                                </td>
+
+                            </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
-
-<div class="col-md-3">
-
-<label>Date</label>
-
-<label>Select Friday</label>
-
-<select class="form-select" name="donation_date" required>
-
-    <option value="">Select Friday</option>
-
-    {% for friday in fridays %}
-
-    <option value="{{ friday }}">
-        {{ friday.strftime('%d-%b-%Y') }}
-    </option>
-
-    {% endfor %}
-
-</select>
-
-</div>
-
-<div class="col-md-3">
-
-<label>Amount</label>
-
-<input
-type="number"
-step="0.01"
-name="amount"
-class="form-control"
-required>
-
-</div>
-
-<div class="col-md-2">
-
-<label>&nbsp;</label>
-
-<button class="btn btn-success w-100">
-
-Save
-
-</button>
-
-</div>
-
-</div>
-
-<div class="mt-3">
-
-<label>Remarks</label>
-
-<input
-class="form-control"
-name="remarks">
-
-</div>
-
-</form>
-
-</div>
-
-<hr>
-
-<h4>Donation History</h4>
-
-<table class="table table-bordered table-striped">
-
-<thead>
-
-<tr>
-
-<th>Date</th>
-<th>Member</th>
-<th>Amount</th>
-<th>Remarks</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-{% for d in donations %}
-
-<tr>
-
-<td>{{ d.donation_date }}</td>
-
-<td>{{ d.member.name }}</td>
-
-<td>₹ {{ "%.2f"|format(d.amount) }}</td>
-
-<td>{{ d.remarks }}</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>
 
 {% endblock %}

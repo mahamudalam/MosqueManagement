@@ -10,6 +10,7 @@ from .imam_salary_payment import ImamSalaryPayment
 from .PrayerTime import PrayerTime 
 from .contact import ContactRequest
 from .expense import Expense
+from .Monthly_Report import MonthlyReport
 
 __all__ = [
     "db",
@@ -25,4 +26,5 @@ __all__ = [
     "PrayerTime", 
     "ContactRequest",
     "Expense",
+    "MonthlyReport",
 ]
