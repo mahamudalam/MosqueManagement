@@ -2,129 +2,237 @@
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container py-5">
 
-<h2>Friday Donation Report</h2>
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success">
+            <i class="fa fa-hand-holding-heart"></i>
+            Friday Contribution Report
+        </h2>
+        <p class="text-muted">
+            View Friday contribution records by month and year.
+        </p>
+    </div>
 
-<form method="GET" class="row mb-4">
+    <!-- Filter Card -->
+    <div class="card shadow-sm border-0 mb-4">
 
-<div class="col-md-3">
-<input type="number"
-       name="year"
-       value="{{ year }}"
-       class="form-control">
-</div>
+        <div class="card-header bg-success text-white">
+            <i class="fa fa-filter"></i>
+            Search Report
+        </div>
 
-<div class="col-md-3">
+        <div class="card-body">
 
-<select name="month" class="form-select">
-    {% set months = [
-        'January','February','March','April','May','June',
-        'July','August','September','October','November','December'
-    ] %}
+            <form method="GET">
 
-    {% for m in range(1,13) %}
-    <option value="{{ m }}" {% if month == m %}selected{% endif %}>
-        {{ months[m-1] }}
-    </option>
-    {% endfor %}
-</select>
+                <div class="row g-3">
 
-</div>
+                    <div class="col-md-3">
 
-<div class="col-md-2 d-flex gap-2 align-items-center">
+                        <label class="form-label">
+                            Year
+                        </label>
 
-    <button class="btn btn-success">Search</button>
+                        <input type="number"
+                               name="year"
+                               value="{{ year }}"
+                               class="form-control">
 
-    <a href="{{ url_for('auth.home') }}" class="btn btn-primary">
-       Home
-    </a>
+                    </div>
 
-</div>
+                    <div class="col-md-3">
 
-</form>
+                        <label class="form-label">
+                            Month
+                        </label>
 
-<table class="table table-bordered table-striped">
+                        <select name="month" class="form-select">
 
-    <thead>
-        <tr>
-            <th>Member Name</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-        </tr>
-    </thead>
+                            {% set months = [
+                            'January','February','March','April','May','June',
+                            'July','August','September','October','November','December'
+                            ] %}
 
-    <tbody>
-        {% for row in report_data %}
-        <tr>
-            <td>{{ row.member_name }}</td>
-            <td>{{ row.date }}</td>
-            <td>{{ row.amount }}</td>
-            <td>{{ row.status }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+                            {% for m in range(1,13) %}
+                            <option value="{{m}}" {% if month==m %}selected{% endif %}>
+                                {{ months[m-1] }}
+                            </option>
+                            {% endfor %}
 
-    <tfoot>
-        <tr>
-            <th colspan="2">Total</th>
-            <th colspan="2">{{ total_amount }}</th>
-        </tr>
-    </tfoot>
+                        </select>
 
-</table>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-end">
+
+                        <button class="btn btn-success me-2">
+                            <i class="fa fa-search"></i>
+                            Search
+                        </button>
+
+                        {% if request.args.get('source') == 'dashboard' %}
+
+                            <a href="{{ url_for('reports.reports') }}" class="btn btn-secondary">
+                                <i class="fa fa-home"></i> Home
+                            </a>
+
+                            {% else %}
+
+                            <a href="{{ url_for('auth.home') }}" class="btn btn-secondary">
+                                <i class="fa fa-home"></i> Home
+                            </a>
+
+                            {% endif %}
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Summary -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-success shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">
+                        Total Donation
+                    </h6>
+
+                    <h3 class="text-success fw-bold">
+                        ₹ {{ "{:,.2f}".format(total_amount or 0) }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Report Table -->
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-primary text-white">
+
+            <i class="fa fa-table"></i>
+
+            Donation Details
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Member Name</th>
+
+                            <th>Date</th>
+
+                            <th class="text-end">Amount</th>
+
+                            <th class="text-center">Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if report_data %}
+
+                            {% for row in report_data %}
+
+                            <tr>
+
+                                <td>{{ row.member_name }}</td>
+
+                                <td>{{ row.date }}</td>
+
+                                <td class="text-end">
+                                    ₹ {{ "{:,.2f}".format(row.amount) }}
+                                </td>
+
+                                <td class="text-center">
+
+                                    {% if row.status == "Paid" %}
+
+                                        <span class="badge bg-success">
+                                            Paid
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-danger">
+                                            Due
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+
+                                <td colspan="4" class="text-center text-muted py-4">
+
+                                    No records found.
+
+                                </td>
+
+                            </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                    <tfoot class="table-secondary">
+
+                        <tr>
+
+                            <th colspan="2">
+                                Total Collection
+                            </th>
+
+                            <th class="text-end">
+                                ₹ {{ "{:,.2f}".format(total_amount or 0) }}
+                            </th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 {% endblock %}
-
-<table class="table table-bordered">
-
-<thead>
-
-<tr>
-
-<th>Member</th>
-<th>Amount</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-{% for donation in donations %}
-
-<tr>
-
-<td>{{ donation.member.name }}</td>
-
-<td>₹ {{ donation.amount }}</td>
-
-<td>
-
-{% if donation.status=="Paid" %}
-
-<span class="badge bg-success">
-Paid
-</span>
-
-{% else %}
-
-<span class="badge bg-danger">
-Due
-</span>
-
-{% endif %}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</tbody>
-
-</table>

@@ -1,169 +1,325 @@
-{% extends 'base_admin.html' %}
+{% extends "base_admin.html" %}
 
 {% block content %}
 
 {% include "base.html" %}
 
-<h2 class="mb-4">🕌 Imam Salary Contribution</h2>
+<div class="container py-4">
 
-<form method="POST" id="imamContributionForm">
+    <!-- Page Header -->
+    <div class="card shadow-sm border-0 mb-4">
 
-    <div class="row">
+        <div class="card-header bg-primary text-white">
 
-        <div class="col-md-4 mb-3">
-            <label>Member</label>
-
-            <select name="member_id" class="form-select" required>
-
-                <option value="">Select Member</option>
-
-                {% for member in members %}
-                <option value="{{ member.id }}">
-                    {{ member.name }}
-                </option>
-                {% endfor %}
-
-            </select>
-        </div>
-
-        <div class="col-md-4 mb-3">
-
-            <label>Salary Month</label>
-
-            <select name="salary_month"
-                    class="form-select"
-                    required>
-
-                {% for value,name in months %}
-                    <option value="{{ value }}">
-                        {{ name }}
-                    </option>
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="col-md-4 mb-3">
-
-            <label>Salary Year</label>
-
-            <input type="number"
-                   name="salary_year"
-                   value="{{ current_year if current_year else 2026 }}"
-                   class="form-control"
-                   required>
+            <h3 class="mb-0">
+                <i class="fa fa-mosque me-2"></i>
+                Imam Salary Contribution
+            </h3>
 
         </div>
 
     </div>
 
-    <div class="row">
+    <!-- Contribution Form -->
+    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="col-md-4 mb-3">
+        <div class="card-header bg-success text-white">
 
-            <label>Contribution Date</label>
+            <i class="fa fa-plus-circle me-2"></i>
 
-            <input type="date"
-                   name="contribution_date"
-                   class="form-control"
-                   required>
+            Add Contribution
 
         </div>
 
-        <div class="col-md-4 mb-3">
+        <div class="card-body">
 
-            <label>Amount</label>
+            <form method="POST" id="imamContributionForm">
 
-            <input type="number"
-                   step="0.01"
-                   name="amount"
-                   class="form-control"
-                   required>
+                <div class="row">
 
-        </div>
+                    <!-- Member -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
 
-        <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">
+                            Member
+                        </label>
 
-            <label>Remarks</label>
+                        <select name="member_id"
+                                class="form-select"
+                                required>
 
-            <input type="text"
-                   name="remarks"
-                   class="form-control">
+                            <option value="">
+                                Select Member
+                            </option>
+
+                            {% for member in members %}
+
+                            <option value="{{ member.id }}">
+                                {{ member.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Salary Month -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Salary Month
+                        </label>
+
+                        <select name="salary_month"
+                                class="form-select"
+                                required>
+
+                            {% for value, name in months %}
+
+                            <option value="{{ value }}">
+                                {{ name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Salary Year -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Salary Year
+                        </label>
+
+                        <input
+                            type="number"
+                            name="salary_year"
+                            value="{{ current_year if current_year else 2026 }}"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+                    <!-- Contribution Date -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Contribution Date
+                        </label>
+
+                        <input
+                            type="date"
+                            name="contribution_date"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Amount (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="1"
+                            name="amount"
+                            class="form-control"
+                            placeholder="Enter amount"
+                            required>
+
+                    </div>
+
+                    <!-- Remarks -->
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+
+                        <label class="form-label fw-bold">
+                            Remarks
+                        </label>
+
+                        <input
+                            type="text"
+                            name="remarks"
+                            class="form-control"
+                            placeholder="Optional remarks">
+
+                    </div>
+
+                </div>
+
+                <div class="text-end">
+
+                    <button class="btn btn-success"
+                            onclick="return confirmContribution()">
+
+                        <i class="fa fa-save me-1"></i>
+
+                        Save Contribution
+
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
     </div>
 
-    <button class="btn btn-success" onclick="return confirmContribution()">
-        Save Contribution
-    </button>
+    <!-- Contribution History -->
+    <div class="card shadow-sm border-0">
 
-</form>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+
+            <span>
+
+                <i class="fa fa-history me-2"></i>
+
+                Contribution History
+
+            </span>
+
+            <span class="badge bg-light text-primary">
+
+                Total Records : {{ contributions|length }}
+
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover table-bordered align-middle">
+
+                    <thead class="table-primary">
+
+                        <tr>
+
+                            <th>Member</th>
+
+                            <th>Month</th>
+
+                            <th>Year</th>
+
+                            <th>Date</th>
+
+                            <th class="text-end">
+                                Amount
+                            </th>
+
+                            <th>Remarks</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if contributions %}
+
+                            {% for c in contributions %}
+
+                            <tr>
+
+                                <td>{{ c.member.name }}</td>
+
+                                <td>{{ months[c.salary_month-1][1] }}</td>
+
+                                <td>{{ c.salary_year }}</td>
+
+                                <td>{{ c.contribution_date.strftime("%d-%b-%Y") }}</td>
+
+                                <td class="text-end">
+
+                                    ₹ {{ "{:,.2f}".format(c.amount) }}
+
+                                </td>
+
+                                <td>{{ c.remarks or "-" }}</td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="text-center text-muted py-4">
+
+                                    <i class="fa fa-inbox fa-2x mb-2"></i>
+
+                                    <br>
+
+                                    No contribution records found.
+
+                                </td>
+
+                            </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                    <tfoot class="table-secondary">
+
+                        <tr>
+
+                            <th colspan="4" class="text-end">
+
+                                Total Contribution
+
+                            </th>
+
+                            <th class="text-end">
+
+                                ₹ {{ "{:,.2f}".format(total_amount or 0) }}
+
+                            </th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script>
+
 function confirmContribution() {
+
     const form = document.getElementById('imamContributionForm');
-    
-    // Validate form
+
     if (!form.checkValidity()) {
+
         form.reportValidity();
+
         return false;
+
     }
-    
-    // Just submit the form - let Flask handle the response
-    return true;
+
+    return confirm("Are you sure you want to save this contribution?");
+
 }
+
 </script>
-
-<h4 class="mt-4">Contribution History</h4>
-
-<table class="table table-bordered table-striped">
-
-    <thead>
-        <tr>
-            <th>Member</th>
-            <th>Salary Month</th>
-            <th>Salary Year</th>
-            <th>Contribution Date</th>
-            <th>Amount</th>
-            <th>Remarks</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-    {% for c in contributions %}
-
-        <tr>
-            <td>{{ c.member.name }}</td>
-            <td>{{ months[c.salary_month-1][1] }}</td>
-            <td>{{ c.salary_year }}</td>
-            <td>{{ c.contribution_date.strftime("%d-%m-%Y") }}</td>
-            <td>₹ {{ "%.2f"|format(c.amount) }}</td>
-            <td>{{ c.remarks or "-" }}</td>
-        </tr>
-
-    {% else %}
-
-        <tr>
-            <td colspan="6" class="text-center">
-                No contribution records found.
-            </td>
-        </tr>
-
-    {% endfor %}
-
-    </tbody>
-
-    <tfoot>
-        <tr>
-            <th colspan="4" class="text-end">Total</th>
-            <th>₹ {{ "%.2f"|format(total_amount) }}</th>
-            <th></th>
-        </tr>
-    </tfoot>
-
-</table>
 
 {% endblock %}

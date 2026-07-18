@@ -1,12 +1,23 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request,send_file
 from datetime import datetime
 from sqlalchemy import extract
 from flask_login import login_required
 
-from app.models import FridayDonation, ImamSalaryContribution
+from app.models import FridayDonation, ImamSalaryContribution, MonthlyReport
 from app.routes.access import role_required
 
-reports_bp = Blueprint("reports", __name__)
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+
+from app.services.report_service import MonthlyReportService
+
+reports_bp = Blueprint(
+    "reports",
+    __name__,
+    url_prefix="/reports"
+)
+
+
+#reports_bp = Blueprint("reports", __name__)
 
 
 @reports_bp.route("/friday-report")
@@ -80,4 +91,86 @@ def imam_salary_contribution_report():
         total_amount=total_amount,
         year=year,
         month=month
+    )
+
+
+# ==========================================
+# Monthly Reports 
+# ==========================================
+
+@reports_bp.route("/")
+@login_required
+@role_required("Admin", "Committee Member")
+def reports():
+
+    years = list(range(2026, 2036))
+
+    months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ]
+
+    reports = MonthlyReport.query.order_by(
+        MonthlyReport.generated_on.desc()
+    ).all()
+
+    return render_template(
+        "reports/reports.html",
+        years=years,
+        months=months,
+        reports=reports
+    )
+
+
+@reports_bp.route("/generate", methods=["POST"])
+@login_required
+@role_required("Admin", "Committee Member")
+def generate_report():
+
+    year = int(request.form["year"])
+    month = int(request.form["month"])
+
+    success, message = MonthlyReportService.generate_monthly_report(year, month)
+
+    if success:
+        flash(message, "success")
+    else:
+        flash(message, "warning")
+
+    return redirect(url_for("reports.reports"))
+
+@reports_bp.route("/view/<int:id>")
+@login_required
+@role_required("Admin", "Committee Member")
+def view_report(id):
+
+    report = MonthlyReport.query.get_or_404(id)
+
+    print(report.PDF_Path)
+
+    return send_file(
+        report.PDF_Path,
+        mimetype="application/pdf"
+    )    
+
+@reports_bp.route("/download/<int:id>")
+@login_required
+@role_required("Admin", "Committee Member")
+def download_report(id):
+
+    report = MonthlyReport.query.get_or_404(id)
+
+    return send_file(
+        report.PDF_Path,
+        as_attachment=True
     )

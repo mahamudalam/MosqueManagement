@@ -1,0 +1,205 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+{% include "base.html" %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Reports</h2>
+
+    <!-- Quick Report Links -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-hand-holding-heart fa-3x text-primary mb-3"></i>
+
+                    <h5>Friday Donation Report</h5>
+
+                    <p class="text-muted">
+                        View and download Friday donation reports.
+                    </p>
+
+                    <a href="{{ url_for('reports.friday_report',source='dashboard') }}"
+                       class="btn btn-primary">
+                        <i class="fa fa-eye"></i> Open Report
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-mosque fa-3x text-success mb-3"></i>
+
+                    <h5>Imam Contribution Report</h5>
+
+                    <p class="text-muted">
+                        View and download Imam contribution reports.
+                    </p>
+
+                    <a href="{{ url_for('reports.imam_salary_contribution_report',source='dashboard') }}"
+                       class="btn btn-success">
+                        <i class="fa fa-eye"></i> Open Report
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fa fa-file-pdf fa-3x text-danger mb-3"></i>
+
+                    <h5>Monthly Financial Report</h5>
+
+                    <p class="text-muted">
+                        Generate monthly financial report PDF.
+                    </p>
+
+                    <a href="#generateReport" class="btn btn-danger">
+                        <i class="fa fa-file-pdf"></i> Generate Report
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Generate Monthly Report -->
+    <div class="card shadow mb-4" id="generateReport">
+
+        <div class="card-header bg-success text-white">
+            Generate Monthly Financial Report
+        </div>
+
+        <div class="card-body">
+
+            <form method="POST" action="{{ url_for('reports.generate_report') }}">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label><strong>Year</strong></label>
+
+                        <select name="year" class="form-control">
+
+                            {% for y in years %}
+                            <option value="{{ y }}">{{ y }}</option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label><strong>Month</strong></label>
+
+                        <select name="month" class="form-control">
+
+                            {% for m in months %}
+                            <option value="{{ loop.index }}">
+                                {{ m }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end">
+
+                        <button class="btn btn-success w-100">
+                            <i class="fa fa-file-pdf"></i>
+                            Generate PDF
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Generated Reports -->
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            Generated Monthly Reports
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Year</th>
+                        <th>Month</th>
+                        <th>Generated On</th>
+                        <th width="180">Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for report in reports %}
+
+                    <tr>
+
+                        <td>{{ report.report_year }}</td>
+
+                        <td>{{ report.report_month }}</td>
+
+                        <td>{{ report.generated_on.strftime('%d-%b-%Y %I:%M %p') }}</td>
+
+                        <td>
+
+                            <a href="{{ url_for('reports.view_report', id=report.report_id) }}"
+                               class="btn btn-primary btn-sm"
+                               target="_blank">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+
+                            <a href="{{ url_for('reports.download_report', id=report.report_id) }}"
+                               class="btn btn-success btn-sm">
+                                <i class="fa fa-download"></i> Download
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            No reports generated yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
