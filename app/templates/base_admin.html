@@ -3,6 +3,8 @@
 <head>
     <title>Masjid Admin Panel</title>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -13,25 +15,86 @@
         }
 
         /* Sidebar */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background: #198754;
-            position: fixed;
-            color: white;
-            padding-top: 20px;
+        /* ===============================
+        SIDEBAR
+        ================================= */
+
+        .sidebar{
+
+            width:250px;
+            height:100vh;
+
+            background:#198754;
+
+            position:fixed;
+
+            left:0;
+
+            top:0;
+
+            color:white;
+
+            padding-top:20px;
+
+            overflow-y:auto;
+
+            transition:all .35s ease;
+
+            z-index:1000;
+
         }
 
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 12px 20px;
-            text-decoration: none;
+        .sidebar a{
+
+            display:flex;
+
+            align-items:center;
+
+            color:white;
+
+            padding:14px 20px;
+
+            text-decoration:none;
+
+            transition:.3s;
+
         }
 
-        .sidebar a:hover {
-            background: #145c32;
+        .sidebar a:hover{
+
+            background:#157347;
+
         }
+
+        /* Hide Sidebar */
+
+        .sidebar.hide{
+
+            transform:translateX(-250px);
+
+        }
+
+        /* Main */
+
+        .main{
+
+            margin-left:250px;
+
+            transition:all .35s ease;
+
+        }
+
+        /* Full Width */
+
+        .main.full{
+
+            margin-left:0;
+
+        }
+
+    /* ===============================
+        SIDEBAR END
+    ================================= */
 
         /* Main content */
         .main {
@@ -39,11 +102,97 @@
         }
 
         /* Top navbar */
-        .topbar {
-            background: #f8f9fa;
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-        }
+            /*=========================
+                PROFESSIONAL NAVBAR
+            ==========================*/
+
+            .topbar{
+
+                height:80px;
+
+                background:#fff;
+
+                border-bottom:1px solid #e9ecef;
+
+                padding:0 30px;
+
+                box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+            }
+
+            .top-icon{
+
+                width:42px;
+
+                height:42px;
+
+                background:#f8f9fa;
+
+                border-radius:50%;
+
+                display:flex;
+
+                justify-content:center;
+
+                align-items:center;
+
+                cursor:pointer;
+
+                color:#198754;
+
+                transition:.3s;
+
+            }
+
+            .top-icon:hover{
+
+                background:#198754;
+
+                color:white;
+
+            }
+
+            .avatar{
+
+                width:45px;
+
+                height:45px;
+
+                border-radius:50%;
+
+                background:#198754;
+
+                color:white;
+
+                display:flex;
+
+                justify-content:center;
+
+                align-items:center;
+
+                font-weight:bold;
+
+                font-size:18px;
+
+                cursor:pointer;
+
+            }
+
+            .dropdown-menu{
+
+                border:none;
+
+                border-radius:12px;
+
+                box-shadow:0 10px 30px rgba(0,0,0,.15);
+
+            }
+
+            .dropdown-item{
+
+                padding:10px 18px;
+
+            }
 
         /* Collapse menu styling */
         .collapse a {
@@ -61,17 +210,55 @@
             display: inline-block;
         }
 
+        /* Masjid styling */
+        .mosque-logo{
+
+            width:85px;
+            height:85px;
+
+            margin:0 auto 15px;
+
+            border-radius:50%;
+
+            background:#fff;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            overflow:hidden;
+
+            border:3px solid rgba(255,255,255,.30);
+
+        }
+
+        .mosque-logo img{
+
+            width:70px;
+            height:70px;
+            object-fit:contain;
+
+        }        
     </style>
 </head>
 
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
 
-    <h4 class="text-center">🕌 DurgaNagar Masjid</h4>
+   <div class="mosque-logo">
 
-    <a href="/dashboard">Dashboard</a>
+    <img src="{{ url_for('static', filename='images/mosque-logo.png') }}"
+         alt="Mosque Logo">
+
+</div>
+
+    <!--<h4 class="text-center">🕌Jama Masjid DurgaNagar</h4>-->
+
+    <a href="/dashboard">🏠 Dashboard</a>
 
     {% if current_user.is_authenticated and current_user.role in ['Admin'] %}
     <!-- Imam Management Dropdown -->
@@ -92,60 +279,198 @@
     </div>
     {% endif %}
 
-    {% if current_user.is_authenticated and current_user.role in ['Admin', 'Committee Member'] %}
-    <!---<a href="#">Reports</a>-->
+    {% if current_user.is_authenticated and current_user.role == 'Admin' %}
+
     <li class="nav-item">
     <a class="nav-link" href="{{ url_for('reports.reports') }}">
         <!--<i class="fa fa-file-pdf"></i>-->
-        Reports
+        📊 Reports
     </a>
     </li>
-    <a class="nav-link" href="/friday-donation">Friday Contribution</a>
-    <a class="nav-link" href="/general-contribution">General Contribution</a>
-    <a class="nav-link" href="/imam-salary-contribution">Imam Salary Contribution</a>
-    <a class="nav-link" href="/expense/add">Expense Management</a>
-    <a class="nav-link" href="/members">Members</a>
-    <a class="nav-link" href="/add-member">Add Member</a>
-    <a class="nav-link" href="/prayer-times">Prayer Time</a>
-    <a class="nav-link" href="/admin/contact-requests">Contact US Requests</a>
-
-
+    <a class="nav-link" href="/friday-donation">💰 Friday Contribution</a>
+    <a class="nav-link" href="/general-contribution">📦 General Contribution</a>
+    <a class="nav-link" href="/imam-salary-contribution">💰Imam Salary Contribution</a>
+    <a class="nav-link" href="/expense/add">💳 Expense Management</a>
+    <a class="nav-link" href="/members">👥 Members</a>
+    <a class="nav-link" href="/add-member">➕ Add Member</a>
+    <a class="nav-link" href="/prayer-times">🕌 Prayer Time</a>
+    <a class="nav-link" href="/admin/contact-requests">📨 Contact US Requests</a>
+    <a class="nav-link" href="{{ url_for('dashboard.create_user') }}">⚙ User Management</a>
     
     {% endif %}
 
-    {% if current_user.is_authenticated and current_user.role == 'Admin' %}
-    <a class="nav-link" href="{{ url_for('dashboard.create_user') }}">User Management</a>
+    {% if current_user.is_authenticated and current_user.role == 'Committee Member' %}
+
+    <a class="d-flex justify-content-between align-items-center"
+       data-bs-toggle="collapse"
+       href="#imamMenu"
+       role="button"
+       aria-expanded="false"
+       aria-controls="imamMenu"
+       style="cursor: pointer;">
+        📋 Imam Management
+        <span id="imamIcon">▼</span>
+    </a>
+
+    <div class="collapse" id="imamMenu">
+        <a href="/imam-salary-payment" class="ps-4">💰 Imam Salary Pay/Details</a>
+    </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('reports.reports') }}">
+                    <!--<i class="fa fa-file-pdf"></i>-->
+                    📊 Reports
+            </a>
+        </li>
+        <a class="nav-link" href="/friday-donation">💰 Friday Contribution</a>
+        <a class="nav-link" href="/general-contribution">📦 General Contribution</a>
+        <a class="nav-link" href="/imam-salary-contribution">💰Imam Salary Contribution</a>
+        <a class="nav-link" href="/members">👥 Members</a>
+        <a class="nav-link" href="/prayer-times">🕌 Prayer Time</a>
+        <a class="nav-link" href="/admin/contact-requests">📨 Contact US Requests</a>
+        
+
     {% endif %}
 
+    <!--{% if current_user.is_authenticated and current_user.role == 'Admin' %}
+    <a class="nav-link" href="{{ url_for('dashboard.create_user') }}">⚙ User Management</a>
+    {% endif %} -->
+
     {% if current_user.is_authenticated and current_user.role == 'Imam' %}
-    <a class="nav-link" href="/prayer-times">Prayer Time</a>
+    <a class="nav-link" href="/prayer-times">🕌 Prayer Time</a>
+    <a class="d-flex justify-content-between align-items-center"
+       data-bs-toggle="collapse"
+       href="#imamMenu"
+       role="button"
+       aria-expanded="false"
+       aria-controls="imamMenu"
+       style="cursor: pointer;">
+        📋 Imam Management
+        <span id="imamIcon">▼</span>
+    </a>
+
+    <div class="collapse" id="imamMenu">
+        <a href="/imam-salary-payment" class="ps-4">💰 Imam Salary Pay/Details</a>
+    </div>
+
     {% endif %}
     
 
 </div>
 
 <!-- MAIN AREA -->
-<div class="main">
+<div class="main" id="main">
 
     <!-- TOP BAR -->
-    <!-- Top Navigation Bar -->
-<div class="topbar d-flex justify-content-between align-items-center bg-white shadow-sm px-4 py-3 rounded mb-4">
+<!-- ===================== TOP NAVBAR ====================== -->
 
-    <div class="d-flex align-items-center">
-        <i class="bi bi-person-circle fs-4 text-primary me-2"></i>
-        <div>
-            <small class="text-muted d-block">Welcome</small>
-            <strong class="text-dark">
-                {{ current_user.fullname if current_user.is_authenticated else 'Guest' }}
-            </strong>
+<div class="topbar">
+
+    <div class="d-flex justify-content-between align-items-center h-100">
+
+        <!-- LEFT -->
+        <div class="d-flex align-items-center">
+
+            <!-- Sidebar Toggle -->
+            <button class="btn btn-light border rounded-circle me-3">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+
+            <!-- Welcome -->
+            <div>
+            
+                <div class="text-muted small">
+                    Welcome Back
+                </div>
+                
+                <h5 class="mb-0 fw-bold">
+                    {{ current_user.fullname if current_user.is_authenticated else 'Guest' }}
+                </h5>
+
+                <!-- <small class="text-secondary">
+                    Dashboard
+                    <i class="bi bi-chevron-right"></i>
+                    Home
+                </small>  -->
+
+            </div>
+
         </div>
-    </div>
 
-    <div>
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">
-            <i class="bi bi-box-arrow-right me-1"></i>
-            Logout
-        </a>
+
+
+        <!-- RIGHT -->
+        <div class="d-flex align-items-center">
+
+            <!-- Notification -->
+            <div class="top-icon me-3">
+                <i class="bi bi-bell"></i>
+            </div>
+
+            <!-- Date -->
+            <div class="text-end me-4">
+
+                <div class="fw-semibold">
+
+                    <i class="bi bi-calendar-event text-success"></i>
+
+                    <span id="todayDate"></span>
+
+                </div>
+
+            </div>
+
+
+            <!-- User Dropdown -->
+            <div class="dropdown">
+
+                <a href="#"
+                   class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark"
+                   data-bs-toggle="dropdown">
+
+                    <div class="avatar me-2">
+
+                        {{ current_user.fullname[0]|upper if current_user.is_authenticated else 'G' }}
+
+                    </div>
+
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <i class="bi bi-person me-2"></i>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item"
+                        href="{{ url_for('account.change_password') }}">
+                            <i class="bi bi-shield-lock me-2"></i>
+                            Change Password
+                        </a>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                        <a class="dropdown-item text-danger"
+                           href="{{ url_for('auth.logout') }}">
+
+                            <i class="bi bi-box-arrow-right me-2"></i>
+
+                            Logout
+
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -199,5 +524,17 @@ setTimeout(function () {
 }, 3000);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+
+        const options = {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        };
+
+        document.getElementById("todayDate").innerHTML =
+        new Date().toLocaleDateString('en-IN', options);
+
+        </script>
 </body>
 </html>

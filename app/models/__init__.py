@@ -11,6 +11,8 @@ from .PrayerTime import PrayerTime
 from .contact import ContactRequest
 from .expense import Expense
 from .Monthly_Report import MonthlyReport
+from .visitor_counter import VisitorCounter
+from .visitorlog import VisitorLog
 
 __all__ = [
     "db",
@@ -27,4 +29,6 @@ __all__ = [
     "ContactRequest",
     "Expense",
     "MonthlyReport",
+    "VisitorCounter",
+    "VisitorLog",
 ]

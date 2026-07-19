@@ -11,6 +11,9 @@
             <i class="fa fa-mosque"></i>
             Imam Salary Contribution Report
         </h2>
+        <h5 class="text-muted">
+            Jama Masjid Durga Nagar 
+        </h5>   
 
         <p class="text-muted">
             View Imam salary contributions by month and year.
@@ -29,6 +32,8 @@
         <div class="card-body">
 
             <form method="GET">
+
+                <input type="hidden" name="source" value="{{ request.args.get('source', 'home') }}">
 
                 <div class="row g-3">
 
@@ -81,13 +86,13 @@
                         {% if request.args.get('source') == 'dashboard' %}
 
                             <a href="{{ url_for('reports.reports') }}" class="btn btn-secondary">
-                                <i class="fa fa-home"></i> Home
+                                <i class="fa fa-home"></i> Back
                             </a>
 
                             {% else %}
 
                             <a href="{{ url_for('auth.home') }}" class="btn btn-secondary">
-                                <i class="fa fa-home"></i> Home
+                                <i class="fa fa-home"></i> Back
                             </a>
 
                             {% endif %}
@@ -232,7 +237,7 @@
 
                     </tbody>
 
-                    <tfoot class="table-secondary">
+                    <!--<tfoot class="table-secondary">
 
                         <tr>
 
@@ -248,7 +253,7 @@
 
                         </tr>
 
-                    </tfoot>
+                    </tfoot>-->
 
                 </table>
 

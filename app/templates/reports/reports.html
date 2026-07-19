@@ -73,6 +73,7 @@
     </div>
 
     <!-- Generate Monthly Report -->
+    {% if current_user.role == "Admin" %} 
     <div class="card shadow mb-4" id="generateReport">
 
         <div class="card-header bg-success text-white">
@@ -130,6 +131,7 @@
         </div>
 
     </div>
+    {% endif %}
 
     <!-- Generated Reports -->
     <div class="card shadow">
