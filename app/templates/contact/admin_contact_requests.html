@@ -51,8 +51,10 @@
                         <th width="350">Suggestion</th>
                         <th>Date</th>
                         <th>Status</th>
-                        <th width="220">Action</th>
-
+                        {% if current_user.role == 'Admin' %}
+                           <th width="220">Action</th>
+                        {% endif %}
+                        
                     </tr>
 
                     </thead>
@@ -76,7 +78,7 @@
                         <td>
                             {{ row.created_on.strftime("%d-%m-%Y %I:%M %p") }}
                         </td>
-
+                      
                         <td>
 
                             {% if row.status=="New" %}
@@ -89,8 +91,8 @@
                                 <span class="badge bg-success">Closed</span>
                             {% endif %}
 
-                        </td>
-
+                            </td>   
+                        {% if current_user.role == 'Admin' %}             
                         <td>
 
                             <a href="{{ url_for('contact.update_status',id=row.id,status='Reviewed') }}"
@@ -117,6 +119,7 @@
                             </a>
 
                         </td>
+                        {% endif %}
 
                     </tr>
 

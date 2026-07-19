@@ -13,7 +13,7 @@
         </div>
 
         <div class="card-body">
-
+            {% if current_user.role == "Admin" %}
             <form method="POST">
 
                 <div class="row">
@@ -169,6 +169,7 @@
                 </div>
 
             </form>
+            {% endif %}
 
         </div>
 

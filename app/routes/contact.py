@@ -71,7 +71,7 @@ def contact():
 @login_required
 def contact_requests():
 
-    if current_user.role != "Admin":
+    if current_user.role != "Admin" and current_user.role != "Committee Member":
         flash("Access denied.", "danger")
         return redirect(url_for("dashboard.dashboard"))
 

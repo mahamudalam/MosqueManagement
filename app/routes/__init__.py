@@ -9,6 +9,8 @@ from .reports import reports_bp
 from .prayer import prayer_bp
 from .contact import contact_bp
 from .expense import expense_bp
+from .account import account_bp
+
 
 
 
@@ -27,6 +29,7 @@ def register_routes(app):
     app.register_blueprint(prayer_bp)
     app.register_blueprint(contact_bp)
     app.register_blueprint(expense_bp)
+    app.register_blueprint(account_bp)
 
     return app
 

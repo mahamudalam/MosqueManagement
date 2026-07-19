@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash,make_response
 from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models import Admin, PrayerTime
+from app.services.visitor_service import track_visitor
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -9,14 +10,30 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.route("/home")
 def home_page():
 
+    visitor_uuid, is_new, total_visitors = track_visitor()
     prayers = PrayerTime.query.order_by(
         PrayerTime.display_order
     ).all()
 
-    return render_template(
-        "auth/home.html",
-        prayers=prayers
+    response = make_response(
+        render_template(
+            "auth/home.html",
+            prayers=prayers,
+            total_visitors=total_visitors
+        )
     )
+
+    if is_new:
+        response.set_cookie(
+            "visitor_uuid",
+            visitor_uuid,
+            max_age=60 * 60 * 24 * 365,   # 1 year
+            httponly=True,
+            samesite="Lax"
+        )
+
+    return response
+    
 
 
 @auth_bp.route("/")

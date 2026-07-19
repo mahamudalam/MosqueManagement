@@ -74,7 +74,7 @@ def delete_imam(id):
 
 @imam_bp.route("/imam-salary-payment", methods=["GET", "POST"])
 @login_required
-@role_required("Admin", "Committee Member")
+@role_required("Admin", "Committee Member","Imam")
 def imam_salary_payment():
     if request.method == "POST":
         payment = ImamSalaryPayment(
