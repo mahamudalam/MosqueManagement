@@ -21,23 +21,16 @@ from app.routes.access import role_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
-
-@dashboard_bp.route("/dashboard")
-@login_required
-@role_required("Admin", "Committee Member", "Imam")
-def dashboard():
+def get_dashboard_data():
     today = datetime.today()
     current_month = today.month
     current_year = today.year
 
     total_members = Member.query.filter(Member.name != "admin").count()
     total_imams = ImamDetail.query.filter(ImamDetail.status == "Active").count()
-    
 
     friday_total = (
-        db.session.query(
-            func.coalesce(func.sum(FridayDonation.amount), 0)
-        )
+        db.session.query(func.coalesce(func.sum(FridayDonation.amount), 0))
         .filter(
             FridayDonation.donation_date.is_not(None),
             extract("month", FridayDonation.donation_date) == current_month,
@@ -47,9 +40,7 @@ def dashboard():
     )
 
     general_contribution_total = (
-        db.session.query(
-            func.coalesce(func.sum(GeneralContribution.amount), 0)
-        )
+        db.session.query(func.coalesce(func.sum(GeneralContribution.amount), 0))
         .filter(
             GeneralContribution.contribution_date.is_not(None),
             extract("month", GeneralContribution.contribution_date) == current_month,
@@ -59,66 +50,66 @@ def dashboard():
     )
 
     imam_salary_contribution_total = (
-        db.session.query(
-            func.coalesce(func.sum(ImamSalaryContribution.amount), 0)
-        )
+        db.session.query(func.coalesce(func.sum(ImamSalaryContribution.amount), 0))
         .filter(
             ImamSalaryContribution.salary_month == current_month,
             ImamSalaryContribution.salary_year == current_year,
         )
         .scalar()
     )
+
     imam_salary_pay = (
-        db.session.query(
-            func.coalesce(func.sum(ImamSalaryPayment.salary_amount), 0)
-        )
+        db.session.query(func.coalesce(func.sum(ImamSalaryPayment.salary_amount), 0))
         .filter(
             ImamSalaryPayment.salary_month == current_month,
-            ImamSalaryPayment.salary_year == current_year
+            ImamSalaryPayment.salary_year == current_year,
         )
         .scalar()
-
     )
 
-    Total_expense = (
-        db.session.query(
-            func.coalesce(func.sum(Expense.amount), 0)
-        )
+    total_expense = (
+        db.session.query(func.coalesce(func.sum(Expense.amount), 0))
         .filter(
             extract("month", Expense.expense_date) == current_month,
-            extract("year", Expense.expense_date) == current_year
+            extract("year", Expense.expense_date) == current_year,
         )
         .scalar()
-
     )
 
-            
-    Last_month_total_save = (
+    last_month_total_save = (
         db.session.query(MonthlyReport.ClosingBalance)
         .order_by(MonthlyReport.report_id.desc())
         .limit(1)
         .scalar()
     ) or 0
 
-    monthly_expense = Total_expense + imam_salary_pay
-
-    monthly_total = friday_total + general_contribution_total + imam_salary_contribution_total 
-
-    current_month_year = today.strftime("%B %Y")
-
-    return render_template(
-        "dashboard/dashboard.html",
-        total_members=total_members,
-        total_imams=total_imams,
-        friday_total=friday_total,
-        Imam_salary_contribution_total=imam_salary_contribution_total,
-        monthly_total=monthly_total,
-        general_contribution_total=general_contribution_total,
-        current_month_year=current_month_year,
-        monthly_expense=monthly_expense,
-        remaining_balance=(monthly_total + Last_month_total_save) - monthly_expense,
+    monthly_expense = total_expense + imam_salary_pay
+    monthly_total = (
+        friday_total
+        + general_contribution_total
+        + imam_salary_contribution_total
     )
 
+    return {
+        "total_members": total_members,
+        "total_imams": total_imams,
+        "friday_total": friday_total,
+        "Imam_salary_contribution_total": imam_salary_contribution_total,
+        "monthly_total": monthly_total,
+        "general_contribution_total": general_contribution_total,
+        "current_month_year": today.strftime("%B %Y"),
+        "monthly_expense": monthly_expense,
+        "remaining_balance": (monthly_total + last_month_total_save) - monthly_expense,
+    }
+
+@dashboard_bp.route("/dashboard")
+@login_required
+@role_required("Admin", "Committee Member", "Imam")
+def dashboard():
+    return render_template(
+        "dashboard/dashboard.html",
+        **get_dashboard_data()
+    )
 
 @dashboard_bp.route("/users")
 @login_required

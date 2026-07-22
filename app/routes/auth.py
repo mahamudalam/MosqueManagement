@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app.models import Admin, PrayerTime
 from app.services.visitor_service import track_visitor
+from app.routes.dashboard import get_dashboard_data
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -11,15 +12,19 @@ auth_bp = Blueprint("auth", __name__)
 def home_page():
 
     visitor_uuid, is_new, total_visitors = track_visitor()
+
     prayers = PrayerTime.query.order_by(
         PrayerTime.display_order
     ).all()
+
+    dashboard_data = get_dashboard_data()
 
     response = make_response(
         render_template(
             "auth/home.html",
             prayers=prayers,
-            total_visitors=total_visitors
+            total_visitors=total_visitors,
+            **dashboard_data
         )
     )
 

@@ -8,6 +8,8 @@ from app.routes.access import role_required
 
 friday_bp = Blueprint("friday", __name__)
 
+current_month = datetime.today().strftime("%Y-%m")
+
 MONTHS = [
     (1, "January"), (2, "February"), (3, "March"), (4, "April"),
     (5, "May"), (6, "June"), (7, "July"), (8, "August"),
@@ -41,6 +43,8 @@ def friday_donation():
         donation_date = datetime.strptime(request.form["donation_date"], "%Y-%m-%d").date()
 
         if donation_date.weekday() != 4:
+            print("Received:", donation_date)
+            print("Weekday:", donation_date.weekday())
             flash("Only Friday dates are allowed.", "danger")
             donations = FridayDonation.query.order_by(FridayDonation.donation_date.desc()).all()
             return render_template("donation/friday_donation.html", members=members, donations=donations, fridays=fridays)
@@ -54,8 +58,12 @@ def friday_donation():
         )
         db.session.add(donation)
         db.session.commit()
-        flash("Friday donation added successfully.", "success")
+        flash("Friday contrubution added successfully.", "success")
         return redirect(url_for("friday.friday_donation"))
 
     donations = FridayDonation.query.order_by(FridayDonation.donation_date.desc()).all()
-    return render_template("donation/friday_donation.html", members=members, donations=donations, fridays=fridays)
+    return render_template(
+        "donation/friday_donation.html", 
+        members=members, 
+        donations=donations, 
+        current_month=current_month)

@@ -20,7 +20,9 @@
 
                     <!-- Imam -->
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Imam Name</label>
+                        <label class="form-label">Imam Name
+                            <span class="text-danger">*</span>
+                        </label>
 
                         <select name="imam_id" class="form-select" required>
 
@@ -38,7 +40,9 @@
                     <!-- Salary Month -->
                     <div class="col-md-3 mb-3">
 
-                        <label class="form-label">Salary Month</label>
+                        <label class="form-label">Salary Month
+                            <span class="text-danger">*</span>
+                        </label>
 
                         <select name="salary_month"
                                 class="form-select"
@@ -66,7 +70,9 @@
                     <!-- Salary Year -->
                     <div class="col-md-3 mb-3">
 
-                        <label class="form-label">Salary Year</label>
+                        <label class="form-label">Salary Year
+                            <span class="text-danger">*</span>
+                        </label>
 
                         <input type="number"
                                name="salary_year"
@@ -83,7 +89,9 @@
                     <!-- Payment Date -->
                     <div class="col-md-4 mb-3">
 
-                        <label class="form-label">Payment Date</label>
+                        <label class="form-label">Payment Date
+                            <span class="text-danger">*</span>
+                        </label>
 
                         <input type="date"
                                name="payment_date"
@@ -95,7 +103,9 @@
                     <!-- Salary Amount -->
                     <div class="col-md-4 mb-3">
 
-                        <label class="form-label">Salary Amount (₹)</label>
+                        <label class="form-label">Salary Amount (₹)
+                            <span class="text-danger">*</span>
+                        </label>
 
                         <input type="number"
                                step="0.01"
@@ -127,12 +137,14 @@
                     <!-- Paid By -->
                     <div class="col-md-6 mb-3">
 
-                        <label class="form-label">Paid By</label>
+                        <label class="form-label">Paid By
+                            <span class="text-danger">*</span>
+                        </label>
 
                         <input type="text"
                                name="paid_by"
                                class="form-control"
-                               placeholder="Committee Member Name">
+                               placeholder="Committee Member Name" required>
 
                     </div>
 
