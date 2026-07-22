@@ -12,7 +12,7 @@ body{
     margin-left: auto;      /* Pushes card to the right */
     border: none;
     border-radius: 20px;
-    background: rgba(255,255,255,.95);
+    background: rgba(230, 222, 222, 0.95);
     backdrop-filter: blur(20px);
     box-shadow: 0 20px 40px rgba(0,0,0,.20);
     padding: 20px;
@@ -55,7 +55,7 @@ body{
 
 .navbar .nav-link{
 
-    color:#fff !important;
+    color:#141212 !important;
 
     font-size:17px;
 
@@ -75,7 +75,7 @@ body{
 
 .navbar .nav-link.active{
 
-    color:#ffd54f !important;
+    color:#0e0f0d !important;
 
 }
 
@@ -84,7 +84,7 @@ body{
 
     font-size:28px;
 
-    color:white;
+    color:#ebde68;
 
     font-weight:700;
 
@@ -92,10 +92,9 @@ body{
 
 .brand-sub{
 
-    color:#ffd54f;
+    color:#1f1e1d;
 
-    font-size:13px;
-
+    font-size:14px;
     letter-spacing:2px;
 
 }
@@ -159,3 +158,28 @@ body{
     font-size: 0.8rem;
 }
 
+
+
+
+.back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: #198754;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    display: none;
+    z-index: 9999;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,.25);
+}
+
+.back-to-top:hover {
+    background: #146c43;
+    transform: translateY(-4px);
+}
