@@ -30,6 +30,7 @@
 
             <form method="GET">
                 
+                <input type="hidden" name="search" value="1">
                 <input type="hidden" name="source" value="{{ request.args.get('source', 'home') }}">
 
                 <div class="row g-3">
@@ -54,6 +55,7 @@
                         </label>
 
                         <select name="month" class="form-select">
+                            <option value="">Select Month</option>
 
                             {% set months = [
                             'January','February','March','April','May','June',
@@ -66,6 +68,39 @@
                             </option>
                             {% endfor %}
 
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Member
+                        </label>
+
+                        <select id="member" name="member_id" class="form-select">
+                            <option value="">All Members</option>
+
+                            {% for member in members %}
+                                <option value="{{ member.id }}"
+                                    {% if member_id == member.id %}selected{% endif %}>
+                                    {{ member.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select name="status" class="form-select">
+                            <option value="">All</option>
+                            <option value="paid" {% if status == 'paid' %}selected{% endif %}>Paid</option>
+                            <option value="due" {% if status == 'due' %}selected{% endif %}>Due</option>
                         </select>
 
                     </div>
@@ -100,26 +135,167 @@
 
     </div>
 
-    <!-- Summary -->
-    <div class="row mb-4">
+    {% if searched %}
+    <div class="card border-success shadow-sm mb-4">
 
-        <div class="col-md-4">
+        <div class="card-header bg-success text-white">
+            <i class="fa fa-chart-line"></i>
+            Summary
+        </div>
 
-            <div class="card border-success shadow-sm">
+        <div class="card-body">
 
-                <div class="card-body text-center">
+            {% if member_summary %}
 
-                    <h6 class="text-muted">
-                        Total Contribution
-                    </h6>
+            <div class="row">
 
-                    <h3 class="text-success fw-bold">
-                        ₹ {{ "{:,.2f}".format(total_amount or 0) }}
-                    </h3>
+                <div class="col-md-6">
+                    <strong>Member Name :</strong>
+                    {{ member_summary.member_name }}
+                </div>
+                
+                <div class="col-md-12 mt-2">
+                    <strong>Total Fridays :</strong>
+                    {{ member_summary.total_fridays }}
+                </div>
 
+                <div class="col-md-6">
+                    <strong>Total :</strong>
+                    ₹ {{ "{:,.2f}".format(member_summary.total_amount) }}
+                </div>
+
+                <div class="col-md-6 mt-2">
+                    <strong>Paid Months :</strong>
+                    {{ member_summary.paid_months|join(', ') if member_summary.paid_months else '-' }}
+                </div>
+
+                <div class="col-md-12 mt-2">
+                    <strong>
+                        Paid Fridays ({{ member_summary.paid_dates|length if member_summary.paid_dates else 0 }}):
+                    </strong>
+                    {{ member_summary.paid_dates|join(', ') if member_summary.paid_dates else '-' }}
+                </div>
+                <div class="col-md-6 mt-2">
+                    <strong>
+                        Due Fridays ({{ member_summary.due_months|length if member_summary.due_months else 0 }}):
+                    </strong>
+                    {{ member_summary.due_months|join(', ') if member_summary.due_months else '-' }}
+                </div>
+
+                <!--<div class="col-md-12 mt-2">
+                    <strong>Paid Fridays :</strong>
+                    {{ member_summary.paid_friday_count }}
+                </div>-->
+
+                <!--<div class="col-md-12 mt-2">
+                    <strong>Due Fridays Count :</strong>
+                    {{ member_summary.due_friday_count }}
+                </div> -->
+
+                <!--<div class="col-md-12 mt-2">
+                    <strong>Advance Fridays :</strong>
+                    {{ member_summary.advance_friday_count }}
+                </div>-->
+
+                <div class="col-md-12 mt-2">
+                    <strong>Money Count :</strong>
+                    {{ member_summary.money_count }}
+                </div>
+
+                <div class="col-md-12 mt-2">
+                    <strong>Rice Count :</strong>
+                    {{ member_summary.rice_count }}
+                </div>
+
+                <div class="col-md-12 mt-2">
+                    <strong>
+                        Advance Months ({{ member_summary.advance_months|length if member_summary.advance_months else 0 }}):
+                    </strong>
+                    {{ member_summary.advance_months|join(', ') if member_summary.advance_months else '-' }}
                 </div>
 
             </div>
+
+            {% endif %}
+
+            {% if due_members_summary %}
+
+            <div class="row mt-3">
+
+                <div class="col-md-3">
+                    <strong>Total Members:</strong>
+                    {{ due_members_summary.total_members }}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Paid:</strong>
+                    {{ due_members_summary.paid_members }}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Due:</strong>
+                    {{ due_members_summary.due_members }}
+                </div>
+
+                <div class="col-md-12 mt-3">
+                    <strong>Due Members:</strong>
+                    {% if due_members_summary.members %}
+                    <table class="table table-bordered table-sm mt-2">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width:45%;">Member Name</th>
+                                <th>Due Month(s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in due_members_summary.members %}
+                            <tr>
+                                <td>{{ member.member_name }}</td>
+                                <td>{{ member.due_months|join(', ') if member.due_months else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    -
+                    {% endif %}
+                </div>
+
+            </div>
+
+            {% if due_members_summary.advance_members %}
+
+            <div class="mt-4">
+
+                <h6 class="text-success">Advance Paid Members</h6>
+
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:40%;">Member Name</th>
+                            <th>Advance Month(s)</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for m in due_members_summary.advance_members %}
+
+                        <tr>
+                            <td>{{ m.member_name }}</td>
+                            <td>{{ m.advance_months | join(', ') }}</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+
+            {% endif %}
+
+            {% endif %}
 
         </div>
 
@@ -148,9 +324,11 @@
 
                             <th>Member Name</th>
 
-                            <th>Date</th>
+                            <th>Fridays Date</th>
 
                             <th class="text-end">Amount</th>
+
+                            <th class="text-center">Contrubution Mode</th>
 
                             <th class="text-center">Status</th>
 
@@ -168,12 +346,14 @@
 
                                 <td>{{ row.member_name }}</td>
 
-                                <td>{{ row.date }}</td>
+                                <td>{{ row.date.strftime('%d-%b-%Y') if row.date else '-' }}</td>
 
                                 <td class="text-end">
                                     ₹ {{ "{:,.2f}".format(row.amount) }}
                                 </td>
-
+                                <td class="text-center">
+                                    {{ row.contribution_mode if row.contribution_mode else "-" }}
+                                </td>
                                 <td class="text-center">
 
                                     {% if row.status == "Paid" %}
@@ -200,7 +380,7 @@
 
                             <tr>
 
-                                <td colspan="4" class="text-center text-muted py-4">
+                                <td colspan="5" class="text-center text-muted py-4">
 
                                     No records found.
 
@@ -237,6 +417,12 @@
         </div>
 
     </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4">
+        <i class="fa fa-search fa-2x mb-2"></i>
+        <p class="mb-0">Please select search criteria and click <strong>Search</strong> to view the report.</p>
+    </div>
+    {% endif %}
 
 </div>
 

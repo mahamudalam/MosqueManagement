@@ -12,6 +12,7 @@ from app import db
 from app.models import (
     MonthlyReport,
     FridayDonation,
+    ContributionMode,
     GeneralContribution,
     ImamSalaryContribution,
     Expense
@@ -88,10 +89,25 @@ class MonthlyReportService:
     @staticmethod
     def calculate_income(from_date, to_date):
 
-        friday = db.session.query(
+        friday_money = db.session.query(
             func.coalesce(func.sum(FridayDonation.amount), 0)
         ).filter(
-            FridayDonation.donation_date.between(from_date, to_date)
+            FridayDonation.contribution_mode == ContributionMode.MONEY,
+            FridayDonation.contribution_date.between(from_date, to_date)
+        ).scalar()
+
+        friday_rice = db.session.query(
+            func.coalesce(func.sum(FridayDonation.amount), 0)
+        ).filter(
+            FridayDonation.contribution_mode== ContributionMode.RICE,
+            FridayDonation.contribution_date.between(from_date, to_date)
+        ).scalar()
+
+        friday_Jumma_Namaz = db.session.query(
+            func.coalesce(func.sum(FridayDonation.amount), 0)
+        ).filter(
+            FridayDonation.contribution_mode == ContributionMode.JUMMA_NAMAZ,
+            FridayDonation.contribution_date.between(from_date, to_date)
         ).scalar()
 
         general = db.session.query(
@@ -106,9 +122,9 @@ class MonthlyReportService:
             ImamSalaryContribution.contribution_date.between(from_date, to_date)
         ).scalar()
 
-        total_income = friday + general + imam
+        total_income = friday_money + friday_rice + friday_Jumma_Namaz + general + imam
 
-        return friday, general, imam, total_income
+        return friday_money, friday_rice, friday_Jumma_Namaz, general, imam, total_income
 
     @staticmethod
     def calculate_expense(from_date, to_date):
@@ -144,7 +160,7 @@ class MonthlyReportService:
             previous_month
         )
 
-        friday, general, imam, total_income = (
+        friday_money, friday_rice, friday_Jumma_Namaz, general, imam, total_income = (
             MonthlyReportService.calculate_income(
                 from_date,
                 to_date
@@ -166,7 +182,9 @@ class MonthlyReportService:
             report_year=report_year,
             report_month=report_month,
             OpeningBalance=opening_balance,
-            Friday_contribution=friday,
+            friday_money_contribution=friday_money,
+            friday_jumma_namaz_contribution=friday_Jumma_Namaz,
+            friday_rice_contribution=friday_rice,
             General_contribution=general,
             Imam_contribution=imam,
             TotalIncome=total_income,

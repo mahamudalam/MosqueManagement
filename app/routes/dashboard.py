@@ -9,6 +9,7 @@ from app.models import (
     Member,
     ImamDetail,
     FridayDonation,
+    ContributionMode,
     GeneralContribution,
     ImamSalaryContribution,
     Admin,
@@ -29,12 +30,35 @@ def get_dashboard_data():
     total_members = Member.query.filter(Member.name != "admin").count()
     total_imams = ImamDetail.query.filter(ImamDetail.status == "Active").count()
 
-    friday_total = (
+    friday_money_total = (
         db.session.query(func.coalesce(func.sum(FridayDonation.amount), 0))
         .filter(
             FridayDonation.donation_date.is_not(None),
-            extract("month", FridayDonation.donation_date) == current_month,
-            extract("year", FridayDonation.donation_date) == current_year,
+            FridayDonation.contribution_mode == ContributionMode.MONEY,
+            extract("month", FridayDonation.contribution_date) == current_month,
+            extract("year", FridayDonation.contribution_date) == current_year,
+        )
+        .scalar()
+    )
+
+    friday_rice_total = (
+        db.session.query(func.coalesce(func.sum(FridayDonation.amount), 0))
+        .filter(
+            FridayDonation.donation_date.is_not(None),
+            FridayDonation.contribution_mode== ContributionMode.RICE,
+            extract("month", FridayDonation.contribution_date) == current_month,
+            extract("year", FridayDonation.contribution_date) == current_year,
+        )
+        .scalar()
+    )
+
+    friday_Jumma_Namaz_total = (
+        db.session.query(func.coalesce(func.sum(FridayDonation.amount), 0))
+        .filter(
+            FridayDonation.donation_date.is_not(None),
+            FridayDonation.contribution_mode == ContributionMode.JUMMA_NAMAZ,
+            extract("month", FridayDonation.contribution_date) == current_month,
+            extract("year", FridayDonation.contribution_date) == current_year,
         )
         .scalar()
     )
@@ -52,8 +76,8 @@ def get_dashboard_data():
     imam_salary_contribution_total = (
         db.session.query(func.coalesce(func.sum(ImamSalaryContribution.amount), 0))
         .filter(
-            ImamSalaryContribution.salary_month == current_month,
-            ImamSalaryContribution.salary_year == current_year,
+            extract("month", ImamSalaryContribution.contribution_date) == current_month,
+            extract("year", ImamSalaryContribution.contribution_date) == current_year,
         )
         .scalar()
     )
@@ -85,7 +109,7 @@ def get_dashboard_data():
 
     monthly_expense = total_expense + imam_salary_pay
     monthly_total = (
-        friday_total
+        friday_money_total + friday_rice_total + friday_Jumma_Namaz_total
         + general_contribution_total
         + imam_salary_contribution_total
     )
@@ -93,7 +117,9 @@ def get_dashboard_data():
     return {
         "total_members": total_members,
         "total_imams": total_imams,
-        "friday_total": friday_total,
+        "friday_rice_total": friday_rice_total,
+        "friday_money_total": friday_money_total,
+        "friday_Jumma_Namaz_total": friday_Jumma_Namaz_total,
         "Imam_salary_contribution_total": imam_salary_contribution_total,
         "monthly_total": monthly_total,
         "general_contribution_total": general_contribution_total,

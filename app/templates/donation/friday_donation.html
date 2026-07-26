@@ -86,22 +86,50 @@
 
                     </div>
 
-                    <!-- Amount -->
                     <div class="col-lg-4 col-md-6 mb-3">
+                        <label for="contribution_mode" class="form-label">Contribution Mode
+                            <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="contribution_mode" name="contribution_mode" required>
+                            <option value="Money">Money</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Jumma Namaz">Jumma Namaz</option>
+                        </select>
+                    </div>                    
+
+                    <!-- Amount -->
+                    <div class="col-lg-4 col-md-6 mb-3" id="amountDiv">
 
                         <label class="form-label fw-bold">
-                            Amount (₹)  <span class="text-danger">*</span>
+                            Amount (₹) <span class="text-danger">*</span>
                         </label>
 
                         <input type="number"
-                               name="amount"
-                               class="form-control"
-                               min="1"
-                               step="0.01"
-                               placeholder="Enter Amount"
-                               required>
+                            id="amount"
+                            name="amount"
+                            class="form-control"
+                            min="1"
+                            step="0.01"
+                            placeholder="Enter Amount"
+                            required>
 
-                    </div>
+                    </div> 
+                    <div class="row">
+
+                    <div class="col-12">
+
+                        <label class="form-label fw-bold">
+
+                            Remarks
+
+                        </label>
+
+                        <textarea class="form-control"
+                                  name="remarks"
+                                  rows="3"
+                                  placeholder="Enter remarks (optional)"></textarea>
+
+                    </div>                                      
 
                     <!-- Save -->
                     <div class="col-lg-2 col-md-6 d-grid mb-3">
@@ -121,23 +149,7 @@
 
                 </div>
 
-                <div class="row">
-
-                    <div class="col-12">
-
-                        <label class="form-label fw-bold">
-
-                            Remarks
-
-                        </label>
-
-                        <textarea class="form-control"
-                                  name="remarks"
-                                  rows="3"
-                                  placeholder="Enter remarks (optional)"></textarea>
-
-                    </div>
-
+                
                 </div>
 
             </form>
@@ -183,6 +195,8 @@
 
                             <th class="text-end">Amount</th>
 
+                            <th>Contribution Mode</th>
+
                             <th>Remarks</th>
 
                         </tr>
@@ -213,6 +227,10 @@
 
                                     ₹ {{ "{:,.2f}".format(d.amount) }}
 
+                                </td>
+
+                                <td>
+                                    {{ d.contribution_mode.value if d.contribution_mode else "-" }}
                                 </td>
 
                                 <td>
