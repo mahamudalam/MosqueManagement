@@ -119,7 +119,10 @@ class PDFService:
 
             ["Opening Balance", f"{report.OpeningBalance:,.2f}"],
 
-            ["Friday Contribution", f"{report.Friday_contribution:,.2f}"],
+             ["Friday Contribution", ""],
+            ["• Cash Collection", f"{report.friday_money_contribution:,.2f}"],
+            ["• Jumma Namaz Collection", f"{report.friday_jumma_namaz_contribution:,.2f}"],
+            ["• Rice Collection", f"{report.friday_rice_contribution:,.2f}"],
 
             ["General Contribution", f"{report.General_contribution:,.2f}"],
 
@@ -139,33 +142,33 @@ class PDFService:
         )
 
         table.setStyle(
-
             TableStyle([
 
-            ("BACKGROUND", (0, 0), (-1, 0), colors.darkblue),
+                ("BACKGROUND", (0, 0), (-1, 0), colors.darkblue),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 12),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 10),
 
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("GRID", (0, 0), (-1, -1), 1, colors.grey),
 
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BACKGROUND", (0, 1), (-1, -2), colors.beige),
+                ("BACKGROUND", (0, -1), (-1, -1), colors.lightgrey),
 
-            ("FONTSIZE", (0, 0), (-1, 0), 12),
+                ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+                ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
 
-            ("BOTTOMPADDING", (0, 0), (-1, 0), 10),
+                # ===== Bold Rows =====
+                ("FONTNAME", (0, 2), (1, 2), "Helvetica-Bold"),   # Friday Contribution
+                ("FONTNAME", (0, 8), (1, 8), "Helvetica-Bold"),   # Total Income
+                ("FONTNAME", (0,10), (1,10), "Helvetica-Bold"),   # Closing Balance
 
-            ("GRID", (0, 0), (-1, -1), 1, colors.grey),
-
-            ("BACKGROUND", (0, 1), (-1, -2), colors.beige),
-
-            ("BACKGROUND", (0, -1), (-1, -1), colors.lightgrey),
-
-            ("FONTNAME", (0, -1), (-1, -1), "Helvetica-Bold"),
-
-            ("ALIGN", (1, 1), (1, -1), "RIGHT"),
-
-            ("BOTTOMPADDING", (0, 1), (-1, -1), 8),
+                # Optional: Gray background for heading rows
+                ("BACKGROUND", (0, 2), (-1, 2), colors.whitesmoke),
+                ("BACKGROUND", (0, 8), (-1, 8), colors.lightgrey),
+                ("BACKGROUND", (0,10), (-1,10), colors.lightgrey),
 
             ])
-
         )
 
         elements.append(table)

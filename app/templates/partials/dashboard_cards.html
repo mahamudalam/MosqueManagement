@@ -27,20 +27,35 @@
             <div class="card shadow border-0 text-white bg-primary h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-people-fill fs-1"></i>
-                    <h6 class="mt-3">Total Members</h6>
+                    <h6 class="mt-3 fw-bold text-dark">Total Members</h6>
                     <h2 class="fw-bold">{{ total_members }}</h2>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <div class="card shadow border-0 text-white bg-success h-100">
+            <div class="card shadow border-0 bg-success h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-cash-stack fs-1"></i>
-                    <h6 class="mt-3">Friday Collection</h6>
-                    <h2 class="fw-bold">
-                        ₹ {{ "{:,.2f}".format(friday_total) }}
-                    </h2>
+                    <i class="bi bi-cash-stack fs-1 text-white"></i>
+
+                    <!-- Heading -->
+                    <h6 class="mt-3 fw-bold text-dark">
+                        Friday Collection
+                    </h6>
+
+                    <!-- Money -->
+                    <h5 class="fw-bold text-warning">
+                        Money ₹ {{ "{:,.2f}".format(friday_money_total) }}
+                    </h5>
+
+                    <!-- Jumma Namaz -->
+                    <h6 class="fw-bold text-info">
+                        Jumma Namaj ₹ {{ "{:,.2f}".format(friday_Jumma_Namaz_total) }}
+                    </h6>
+                    <!-- Rice-->
+                    <h5 class="fw-bold text-white">
+                        Rice ₹ {{ "{:,.2f}".format(friday_rice_total) }}
+                    </h5>
                 </div>
             </div>
         </div>
@@ -49,7 +64,7 @@
             <div class="card shadow border-0 text-white bg-info h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-wallet2 fs-1"></i>
-                    <h6 class="mt-3">General Collection</h6>
+                    <h6 class="mt-3 fw-bold text-dark">General Collection</h6>
                     <h2 class="fw-bold">
                         ₹ {{ "{:,.2f}".format(general_contribution_total) }}
                     </h2>
@@ -61,7 +76,7 @@
             <div class="card shadow border-0 text-white bg-danger h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-bank fs-1"></i>
-                    <h6 class="mt-3">Imam Salary Fund</h6>
+                    <h6 class="mt-3 fw-bold text-dark">Imam Salary Fund</h6>
                     <h2 class="fw-bold">
                         ₹ {{ "{:,.2f}".format(Imam_salary_contribution_total) }}
                     </h2>

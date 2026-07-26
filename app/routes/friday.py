@@ -3,12 +3,15 @@ from flask_login import login_required
 from datetime import datetime, timedelta
 
 from app import db
-from app.models import Member, FridayDonation
+from app.models import Member, FridayDonation,ContributionMode
+#from app.models.friday_donation import FridayDonation, ContributionMode
 from app.routes.access import role_required
+from zoneinfo import ZoneInfo
 
 friday_bp = Blueprint("friday", __name__)
 
 current_month = datetime.today().strftime("%Y-%m")
+IST = ZoneInfo("Asia/Kolkata")
 
 MONTHS = [
     (1, "January"), (2, "February"), (3, "March"), (4, "April"),
@@ -38,13 +41,21 @@ def friday_donation():
     if request.method == "POST":
         member_id = request.form["member_id"]
         amount = float(request.form["amount"])
-        status = "Paid" if amount != 0 else "Due"
+        #status = "Paid" if amount != 0 else "Due"
         remarks = request.form["remarks"]
         donation_date = datetime.strptime(request.form["donation_date"], "%Y-%m-%d").date()
+        contribution_mode = request.form["contribution_mode"]
+        if contribution_mode == "Rice" and amount == 0:
+                status = "Paid"
+        elif contribution_mode == "Money" and amount > 0:
+                status = "Paid"
+        else:
+            status = "Due"
+        #status = "Paid" if amount == 0 or contribution_mode=="Rice" else "Due"
 
         if donation_date.weekday() != 4:
-            print("Received:", donation_date)
-            print("Weekday:", donation_date.weekday())
+            #print("Received:", donation_date)
+            #print("Weekday:", donation_date.weekday())
             flash("Only Friday dates are allowed.", "danger")
             donations = FridayDonation.query.order_by(FridayDonation.donation_date.desc()).all()
             return render_template("donation/friday_donation.html", members=members, donations=donations, fridays=fridays)
@@ -54,6 +65,8 @@ def friday_donation():
             donation_date=donation_date,
             amount=amount,
             status=status,
+            contribution_mode=contribution_mode,
+            contribution_date = datetime.now(IST).date(),
             remarks=remarks
         )
         db.session.add(donation)
@@ -61,7 +74,7 @@ def friday_donation():
         flash("Friday contrubution added successfully.", "success")
         return redirect(url_for("friday.friday_donation"))
 
-    donations = FridayDonation.query.order_by(FridayDonation.donation_date.desc()).all()
+    donations = FridayDonation.query.order_by(FridayDonation.id.desc()).limit(50).all()
     return render_template(
         "donation/friday_donation.html", 
         members=members, 

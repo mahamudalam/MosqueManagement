@@ -2,7 +2,7 @@ from app import db, login_manager
 
 from .admin import Admin, load_user
 from .member import Member
-from .friday_donation import FridayDonation
+from .friday_donation import FridayDonation,ContributionMode
 from .general_contribution import GeneralContribution
 from .imam import ImamDetail
 from .imam_salary_contribution import ImamSalaryContribution
@@ -20,7 +20,7 @@ __all__ = [
     "Admin",
     "load_user",
     "Member",
-    "FridayDonation",
+    "FridayDonation","ContributionMode",
     "GeneralContribution",
     "ImamDetail",
     "ImamSalaryContribution",

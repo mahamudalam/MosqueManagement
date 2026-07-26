@@ -33,6 +33,8 @@
 
             <form method="GET">
 
+                <input type="hidden" name="search" value="1">
+
                 <input type="hidden" name="source" value="{{ request.args.get('source', 'home') }}">
 
                 <div class="row g-3">
@@ -58,6 +60,7 @@
                         </label>
 
                         <select name="month" class="form-select">
+                            <option value="">Select Month</option>
 
                             {% set month_names = [
                             "January","February","March","April","May","June",
@@ -75,6 +78,41 @@
                         </select>
 
                     </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Member
+                        </label>
+
+                    <select id="member" name="member_id" class="form-select">
+                        <option value="">All Members</option>
+
+                        {% for member in members %}
+                            <option value="{{ member.id }}"
+                                {% if member_id == member.id %}selected{% endif %}>
+                                {{ member.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    </div>
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select name="status" class="form-select">
+
+                            <option value="">All</option>
+                            <option value="paid">Paid</option>
+                            <option value="partial">Partial</option>
+                            <option value="due">Due</option>
+
+                        </select>
+
+                    </div>                    
 
                     <div class="col-md-6 d-flex align-items-end">
 
@@ -107,41 +145,302 @@
 
     </div>
 
-    <!-- Summary Card -->
-    <div class="row mb-4">
+        <!-- Summary Card -->
+        <!-- Summary -->
+    {% if searched %}     
+        <div class="card border-success shadow-sm mb-4">
 
-        <div class="col-md-4">
+            <div class="card-header bg-success text-white">
+                <i class="fa fa-chart-line"></i>
+                Summary
+            </div>
 
-            <div class="card border-success shadow-sm">
+            <div class="card-body">
 
-                <div class="card-body text-center">
+                <!-- Default Summary -->
+                <!--{% if not member_summary and not due_members_summary %}
 
-                    <h6 class="text-muted">
-                        Total Contribution
-                    </h6>
+                    <div class="row text-center">
 
-                    <h3 class="text-success fw-bold">
-                        ₹ {{ "{:,.2f}".format(total_amount or 0) }}
-                    </h3>
+                        <div class="col-md-12">
+                            <h6 class="text-muted">Total Contribution</h6>
+                            <h3 class="text-success fw-bold">
+                                ₹ {{ "{:,.2f}".format(total_amount or 0) }}
+                            </h3>
+                        </div>
+
+                    </div>
+
+                {% endif %} -->
+
+                <!-- Member Summary -->
+                {% if member_summary %}
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <strong>Member Name :</strong>
+                        {{ member_summary.member_name }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Required :</strong>
+                        ₹ {{ "{:,.2f}".format(member_summary.required_amount) }}
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <strong>Paid :</strong>
+                        <span class="text-success">
+                            ₹ {{ "{:,.2f}".format(member_summary.paid_amount) }}
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <strong>Due :</strong>
+                        <span class="text-danger">
+                            ₹ {{ "{:,.2f}".format(member_summary.due_amount) }}
+                        </span>
+                    </div>
+
+                    <div class="col-md-12 mt-2">
+                        <strong>Paid Months :</strong>
+                        {{ member_summary.paid_months|join(", ") if member_summary.paid_months else "-" }}
+                    </div>
+
+                    <div class="col-md-12 mt-2">
+                        <strong>Partial Months :</strong>
+                        {{ member_summary.partial_months|join(", ") if member_summary.partial_months else "-" }}
+                    </div>
+
+                    <div class="col-md-12 mt-2">
+                        <strong>Due Months :</strong>
+                        <span class="text-danger">
+                            {{ member_summary.due_months|join(", ") if member_summary.due_months else "None" }}
+                        </span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Advance Amount :</strong>
+                        <span class="text-primary">
+                            ₹ {{ "{:,.2f}".format(member_summary.advance_amount) }}
+                        </span>
+                    </div>
+
+                    <div class="col-md-6 mt-2">
+                        <strong>Advance Months :</strong>
+                        <span class="text-primary">
+                            {% if member_summary.advance_months %}
+                                {{ member_summary.advance_months | join(", ") }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
+                    </div>                    
 
                 </div>
+
+                {% endif %}
+
+                <!-- Due Members Summary -->
+                {% if due_members_summary %}
+
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <strong>Total Members:</strong>
+                        {{ due_members_summary.total_members }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <strong>Paid:</strong>
+                        {{ due_members_summary.paid_members }}
+                    </div>
+
+                    <div class="col-md-3">
+                        <strong>Partial:</strong>
+                        {{ due_members_summary.partial_members }}
+                    </div>
+
+                    <div class="col-md-3 text-danger">
+                        <strong>Due:</strong>
+                        {{ due_members_summary.due_members }}
+                    </div>
+
+                    {% if due_members_summary.members %}
+
+                    <div class="col-md-12 mt-3">
+
+                        <strong>Due Members :</strong>
+
+                        {% for m in due_members_summary.members %}
+                            {{ m.member_name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Advance Month     -->
+                    
+                    {% if due_members_summary.advance_members %}
+
+                    <div class="col-md-12 mt-4">
+
+                        <h6 class="text-success">Advance Paid Members</h6>
+
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width:40%;">Member Name</th>
+                                    <th>Advance Month(s)</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for m in due_members_summary.advance_members %}
+
+                                <tr>
+                                    <td>{{ m.member_name }}</td>
+                                    <td>{{ m.advance_months | join(", ") }}</td>
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
 
             </div>
 
         </div>
 
-    </div>
+        {% if year_summary %}
 
-    <!-- Report Table -->
-    <div class="card shadow border-0">
+            <div class="card shadow-sm border-success mb-4">
 
-        <div class="card-header bg-primary text-white">
+            <div class="card-header bg-success text-white">
+                <i class="fa fa-chart-bar"></i>
+                Year Summary - {{ year }}
+            </div>
 
-            <i class="fa fa-table"></i>
 
-            Contribution Details
+            <div class="card-body">
+
+
+            <div class="row">
+
+
+            <div class="col-md-4">
+            <b>Total Members</b>
+            <br>
+            {{ year_summary.total_members }}
+            </div>
+
+
+            <div class="col-md-4">
+            <b>Total Required</b>
+            <br>
+            ₹ {{ "{:,.2f}".format(year_summary.total_required) }}
+            </div>
+
+
+            <div class="col-md-4">
+            <b>Total Collected</b>
+            <br>
+            ₹ {{ "{:,.2f}".format(year_summary.total_paid) }}
+            </div>
+
+
+            <div class="col-md-4 mt-3">
+            <b>Total Due</b>
+            <br>
+            ₹ {{ "{:,.2f}".format(year_summary.total_due) }}
+            </div>
+
+
+            <div class="col-md-4 mt-3">
+            <b>Fully Paid</b>
+            <br>
+            {{ year_summary.fully_paid }}
+            </div>
+
+
+            <div class="col-md-4 mt-3">
+            <b>Partial</b>
+            <br>
+            {{ year_summary.partial }}
+            </div>
+
+
+            <div class="col-md-4 mt-3">
+            <b>Due Members</b>
+            <br>
+            {{ year_summary.due }}
+            </div>
+
+
+            </div>
+
+
+            <hr>
+
+
+            <h6 class="text-danger">
+            Due Members
+            </h6>
+
+
+            <table class="table table-sm">
+
+            <tr>
+            <th>Member</th>
+            <th class="text-end">Due Amount</th>
+            </tr>
+
+
+            {% for m in year_summary.due_members %}
+
+            <tr>
+
+            <td>
+            {{m.name}}
+            </td>
+
+            <td class="text-end">
+            ₹ {{ "{:,.2f}".format(m.due_amount) }}
+            </td>
+
+            </tr>
+
+        {% endfor %}
+
+
+        </table>
+
 
         </div>
+
+        </div>
+
+        {% endif %}        
+        <!-- Report Table -->
+        <div class="card shadow border-0">
+
+            <div class="card-header bg-primary text-white">
+
+                <i class="fa fa-table"></i>
+
+                Contribution Details
+
+            </div>
 
         <div class="card-body p-0">
 
@@ -187,7 +486,7 @@
 
                                 <td>{{ row.salary_year }}</td>
 
-                                <td>{{ row.date.strftime("%d-%b-%Y") }}</td>
+                                <td>{{ row.date.strftime("%d-%b-%Y") if row.date else "-" }}</td>
 
                                 <td class="text-end">
                                     ₹ {{ "{:,.2f}".format(row.required_amount) }}
@@ -258,6 +557,21 @@
                 </table>
 
             </div>
+        {% else %}
+            <div class="alert alert-info text-center mt-4">
+
+                <i class="fa fa-search fa-2x mb-2"></i>
+
+                <p class="mb-0">
+
+                    Please select search criteria and click
+                    <strong>Search</strong> to view the report.
+
+                </p>
+
+            </div>
+
+            {% endif %}    
 
         </div>
 
