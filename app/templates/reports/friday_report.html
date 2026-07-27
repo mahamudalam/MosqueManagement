@@ -48,7 +48,7 @@
 
                     </div>
 
-                    <div class="col-md-3">
+                    <!--<div class="col-md-3">
 
                         <label class="form-label">
                             Month
@@ -70,7 +70,7 @@
 
                         </select>
 
-                    </div>
+                    </div>-->
 
                     <div class="col-md-3">
 
@@ -91,7 +91,7 @@
 
                     </div>
 
-                    <div class="col-md-3">
+                    <!--<div class="col-md-3">
 
                         <label class="form-label">
                             Status
@@ -103,7 +103,7 @@
                             <option value="due" {% if status == 'due' %}selected{% endif %}>Due</option>
                         </select>
 
-                    </div>
+                    </div>-->
 
                     <div class="col-md-6 d-flex align-items-end">
 
@@ -338,9 +338,9 @@
 
                     <tbody>
 
-                        {% if report_data %}
+                        {% if member_id and not month %}
 
-                            {% for row in report_data %}
+                            {% for row in friday_report_data %}
 
                             <tr>
 

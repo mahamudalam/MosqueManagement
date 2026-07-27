@@ -52,7 +52,7 @@ def friday_donation():
         else:
             status = "Due"
         #status = "Paid" if amount == 0 or contribution_mode=="Rice" else "Due"
-
+        contribution_date=datetime.strptime(request.form["contribution_date"], "%Y-%m-%d").date(),
         if donation_date.weekday() != 4:
             #print("Received:", donation_date)
             #print("Weekday:", donation_date.weekday())
@@ -60,13 +60,24 @@ def friday_donation():
             donations = FridayDonation.query.order_by(FridayDonation.donation_date.desc()).all()
             return render_template("donation/friday_donation.html", members=members, donations=donations, fridays=fridays)
 
+        # Check if record already exists for this month
+        existing = FridayDonation.query.filter_by(
+            member_id=member_id,
+            donation_date=donation_date
+        ).first()
+
+        if existing:
+            flash("A donation record for this member and date already exists.", "warning")
+            return redirect(url_for("friday.friday_donation"))
+
         donation = FridayDonation(
             member_id=member_id,
             donation_date=donation_date,
             amount=amount,
             status=status,
             contribution_mode=contribution_mode,
-            contribution_date = datetime.now(IST).date(),
+            #contribution_date = datetime.now(IST).date(),
+            contribution_date = contribution_date,
             remarks=remarks
         )
         db.session.add(donation)
