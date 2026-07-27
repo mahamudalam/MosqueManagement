@@ -20,6 +20,7 @@ class FridayReportService:
         self.total_amount = Decimal("0.00")
         self.member_summary = None
         self.due_members_summary = None
+        self.friday_report_data = []
 
     def is_future_month(self, donation_date):
         current_date = date.today()
@@ -82,6 +83,7 @@ class FridayReportService:
         for donation in self.donations:
             month = donation.donation_date.month
             key = (donation.member_id, month)
+            #key = (donation.member_id, donation.donation_date)
 
             if key not in self.lookup:
                 self.lookup[key] = {
@@ -89,14 +91,18 @@ class FridayReportService:
                     "date": None,
                     "remarks": [],
                     "statuses": [],
-                    "contribution_modes": []
+                    "contribution_modes": [],
+                    "paid_friday_count": 0
                 }
 
             entry = self.lookup[key]
             entry["amount"] += Decimal(str(donation.amount))
-            entry["statuses"].append(
-                self.get_status(donation.amount, donation.contribution_mode)
-            )
+            entry["paid_friday_count"] += 1
+            #entry["statuses"].append(
+            #    self.get_status(donation.amount, donation.contribution_mode)
+            #)
+
+            entry["statuses"].append(donation.status)
 
             mode_name = (
                 donation.contribution_mode.value
@@ -111,17 +117,43 @@ class FridayReportService:
             if donation.remarks:
                 entry["remarks"].append(donation.remarks)
 
+    def build_friday_report_data(self):
+        self.friday_report_data = []
+
+        for donation in self.donations:
+            self.friday_report_data.append({
+                "member_id": donation.member_id,
+                "member_name": donation.member.name,
+                "date": donation.donation_date,
+                "amount": Decimal(str(donation.amount)),
+                "remarks": donation.remarks,
+                "status": donation.status,   # From DB
+                "contribution_mode": (
+                    donation.contribution_mode.value
+                    if hasattr(donation.contribution_mode, "value")
+                    else str(donation.contribution_mode)
+                ),
+            })
+
     def generate(self):
         self.load_members()
         self.load_donations()
         self.build_lookup()
-        self.build_report_data()
+
+        if self.member_id and not self.month:
+            # Year + Member
+            self.build_friday_report_data()
+        else:
+            # Existing monthly report
+            self.build_report_data()
+
         self.build_member_summary()
         self.build_due_members_summary()
-
+        #print("Friday Report:", self.friday_report_data)
         return {
             "report_data": self.report_data,
             "total_amount": self.total_amount,
+            "friday_report_data": self.friday_report_data,
             "member_summary": self.member_summary,
             "due_members_summary": self.due_members_summary,
             "members": self.members,
@@ -130,6 +162,7 @@ class FridayReportService:
             "member_id": self.member_id,
             "status": self.status,
         }
+
 
     def build_report_data(self):
         self.report_data = []
@@ -174,7 +207,11 @@ class FridayReportService:
                     amount = entry["amount"]
                     contribution_date = entry["date"]
                     remarks = ", ".join(entry["remarks"])
-                    status = "Paid" if "Paid" in entry["statuses"] else "Due"
+                    #status = "Paid" if "Paid" in entry["statuses"] else "Due"
+                    paid_fridays = len(entry["statuses"])
+                    total_fridays = len(self.get_friday_dates_for_month(self.year, month))
+
+                    status = "Paid" if paid_fridays == total_fridays else "Due"
                     contribution_mode_values = [
                         mode for mode in entry.get("contribution_modes", []) if mode
                     ]
@@ -200,6 +237,14 @@ class FridayReportService:
                     "remarks": remarks,
                     "contribution_mode": contribution_mode,
                 })
+
+                '''print(
+                    member.name,
+                    month,
+                    len(entry["statuses"]) if entry else 0,
+                    len(self.get_friday_dates_for_month(self.year, month)),
+                    status
+                )'''
 
                 self.total_amount += amount
 
@@ -249,37 +294,43 @@ class FridayReportService:
             }
 
             for friday_date in friday_dates:
+                # Ignore future Fridays
+                if friday_date > date.today():
+                    continue
+
                 donation = donation_lookup.get(friday_date)
+
+                # No donation for a past Friday = Due
                 if donation is None:
+                    due_friday_count += 1
+                    due_months.append(friday_date.strftime("%d-%b-%Y"))
                     continue
 
-                status = self.get_status(donation.amount, donation.contribution_mode)
-                if self.is_future_date(donation.donation_date):
-                    advance_friday_count += 1
-                    continue
-
-                if status == "Paid":
+                if donation.status == "Paid":
                     paid_friday_count += 1
                 else:
                     due_friday_count += 1
+                    due_months.append(friday_date.strftime("%d-%b-%Y"))
 
-        for donation in member_donations:
-            if self.is_future_month(donation.donation_date):
-                continue
+            for donation in member_donations:
 
-            if self.month and donation.donation_date.month != self.month:
-                continue
+                if self.month and donation.donation_date.month != self.month:
+                    continue
 
-            if self.get_status(donation.amount, donation.contribution_mode) == "Paid":
-                paid_dates.append(donation.donation_date.strftime("%d-%b-%Y"))
-
+                # Include all MONEY donations in the selected year,
+                # even if they are for future dates.
                 if donation.contribution_mode == ContributionMode.MONEY:
-                    money_count += 1
-                elif donation.contribution_mode == ContributionMode.RICE:
-                    rice_count += 1
-            else:
-                due_months.append(donation.donation_date.strftime("%d-%b-%Y"))
+                    total_amount += Decimal(str(donation.amount))
 
+                if self.get_status(donation.amount, donation.contribution_mode) == "Paid":
+                    paid_dates.append(donation.donation_date.strftime("%d-%b-%Y"))
+
+                    if donation.contribution_mode == ContributionMode.MONEY:
+                        money_count += 1
+                    elif donation.contribution_mode == ContributionMode.RICE:
+                        rice_count += 1
+                else:
+                    due_months.append(donation.donation_date.strftime("%d-%b-%Y"))
         advance_months = []
         for donation in member_donations:
             if self.is_future_date(donation.donation_date):
