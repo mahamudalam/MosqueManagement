@@ -39,3 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
     contributionMode.addEventListener("change", toggleAmountField);
 
 });
+
+$(document).ready(function () {
+
+    $('#friday_date').select2({
+        placeholder: "Select Friday(s)",
+        allowClear: true,
+        closeOnSelect: false,
+        width: '100%'
+    });
+
+});

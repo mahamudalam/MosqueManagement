@@ -69,20 +69,21 @@
                     <!-- Friday -->
                     <div class="col-lg-4 col-md-6 mb-3">
 
-                        <label class="form-label fw-bold">
-                            Friday Date <span class="text-danger">*</span>
+                        <label for="friday_date" class="form-label fw-bold">
+                            Friday Dates <span class="text-danger">*</span>
                         </label>
 
                         <select id="friday_date"
                                 name="donation_date"
                                 class="form-select"
+                                multiple="multiple"
                                 required>
-
-                            <option value="">
-                                Select Friday 
-                            </option>
-
                         </select>
+
+                        <div class="form-text">
+                            <i class="fas fa-info-circle text-primary"></i>
+                            Select one or more Fridays.
+                        </div>
 
                     </div>
 

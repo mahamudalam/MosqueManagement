@@ -43,7 +43,8 @@ def friday_donation():
         amount = float(request.form["amount"])
         #status = "Paid" if amount != 0 else "Due"
         remarks = request.form["remarks"]
-        donation_date = datetime.strptime(request.form["donation_date"], "%Y-%m-%d").date()
+        #donation_date = datetime.strptime(request.form["donation_date"], "%Y-%m-%d").date()
+        
         contribution_mode = request.form["contribution_mode"]
         if contribution_mode == "Rice" and amount == 0:
                 status = "Paid"
@@ -52,42 +53,58 @@ def friday_donation():
         else:
             status = "Due"
         #status = "Paid" if amount == 0 or contribution_mode=="Rice" else "Due"
-        contribution_date=datetime.strptime(request.form["contribution_date"], "%Y-%m-%d").date(),
-        if donation_date.weekday() != 4:
-            #print("Received:", donation_date)
-            #print("Weekday:", donation_date.weekday())
-            flash("Only Friday dates are allowed.", "danger")
-            donations = FridayDonation.query.order_by(FridayDonation.donation_date.desc()).all()
-            return render_template("donation/friday_donation.html", members=members, donations=donations, fridays=fridays)
+        contribution_date=datetime.strptime(request.form["contribution_date"], "%Y-%m-%d").date()
 
-        # Check if record already exists for this month
-        existing = FridayDonation.query.filter_by(
-            member_id=member_id,
-            donation_date=donation_date
-        ).first()
+        selected_fridays = request.form.getlist("donation_date")
 
-        if existing:
-            flash("A donation record for this member and date already exists.", "warning")
+        if not selected_fridays:
+            flash("Please select at least one Friday.", "warning")
             return redirect(url_for("friday.friday_donation"))
 
-        donation = FridayDonation(
-            member_id=member_id,
-            donation_date=donation_date,
-            amount=amount,
-            status=status,
-            contribution_mode=contribution_mode,
-            #contribution_date = datetime.now(IST).date(),
-            contribution_date = contribution_date,
-            remarks=remarks
-        )
-        db.session.add(donation)
-        db.session.commit()
-        flash("Friday contrubution added successfully.", "success")
-        return redirect(url_for("friday.friday_donation"))
+        for friday in selected_fridays:
 
+            friday_date = datetime.strptime(friday, "%Y-%m-%d").date()
+
+            # Validate Friday
+            if friday_date.weekday() != 4:
+                flash(f"{friday_date} is not a Friday.", "danger")
+                return redirect(url_for("friday.friday_donation"))
+
+            # Check duplicate
+            existing = FridayDonation.query.filter_by(
+                member_id=member_id,
+                donation_date=friday_date
+                #contribution_mode=contribution_mode
+            ).first()
+
+            if existing:
+                flash(
+                    f"Donation already exists for {friday_date.strftime('%d-%b-%Y')}.",
+                    "warning"
+                )
+                #continue
+                return redirect(url_for("friday.friday_donation"))
+
+            donation = FridayDonation(
+                member_id=member_id,
+                donation_date=friday_date,
+                amount=amount,
+                status=status,
+                contribution_mode=contribution_mode,
+                contribution_date=contribution_date,
+                remarks=remarks
+            )
+
+            db.session.add(donation)
+
+        db.session.commit()
+
+        flash("Friday contribution(s) added successfully.", "success")
+        return redirect(url_for("friday.friday_donation"))
     donations = FridayDonation.query.order_by(FridayDonation.id.desc()).limit(50).all()
     return render_template(
         "donation/friday_donation.html", 
         members=members, 
-        donations=donations, 
+        donations=donations,
+        fridays=fridays, 
         current_month=current_month)
