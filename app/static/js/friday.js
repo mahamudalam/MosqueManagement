@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
             memberSelect.options[memberSelect.selectedIndex].text.trim().toLowerCase();
 
         // If Rice is selected and member is NOT Admin
-        if (contributionMode.value === "Rice" && selectedMember !== "admin") {
+        if (contributionMode.value === "Rice" && selectedMember !== "masjid khajanchi") {
             amountInput.value = 0;
             amountInput.readOnly = true;
             amountInput.style.backgroundColor = "#e9ecef";

@@ -63,6 +63,7 @@ def imam_salary():
             # Update existing record
             existing.amount += amount
             existing.amount_due = imam_salary_contri - existing.amount
+            #existing.contribution_date = datetime.strptime(request.form["contribution_date"], "%Y-%m-%d").date()
 
         else:
 

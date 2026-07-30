@@ -27,7 +27,7 @@ def get_dashboard_data():
     current_month = today.month
     current_year = today.year
 
-    total_members = Member.query.filter(Member.name != "admin").count()
+    total_members = Member.query.filter(Member.name != "MASJID KHAJANCHI").count()
     total_imams = ImamDetail.query.filter(ImamDetail.status == "Active").count()
 
     friday_money_total = (

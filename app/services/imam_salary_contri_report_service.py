@@ -29,7 +29,7 @@ class ImamSalaryContributionReportService:
         # For dropdown
         self.members = (
         Member.query
-        .filter(Member.name != "admin")
+        .filter(Member.name != "MASJID KHAJANCHI")
         .order_by(Member.name)
         .all()
     )
@@ -43,7 +43,7 @@ class ImamSalaryContributionReportService:
 
         # For report generation
         query = Member.query.filter(
-            Member.name != "admin"
+            Member.name != "MASJID KHAJANCHI"
         )
 
         if self.member_id:
