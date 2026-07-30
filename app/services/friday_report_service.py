@@ -125,6 +125,7 @@ class FridayReportService:
                 "member_id": donation.member_id,
                 "member_name": donation.member.name,
                 "date": donation.donation_date,
+                "contribution_date": donation.contribution_date,
                 "amount": Decimal(str(donation.amount)),
                 "remarks": donation.remarks,
                 "status": donation.status,   # From DB

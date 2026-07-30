@@ -308,7 +308,7 @@
 
             <i class="fa fa-table"></i>
 
-            Donation Details
+            Contribution Details
 
         </div>
 
@@ -326,11 +326,18 @@
 
                             <th>Fridays Date</th>
 
+                            <th>Contribution Date</th>
+
                             <th class="text-end">Amount</th>
 
                             <th class="text-center">Contrubution Mode</th>
 
-                            <th class="text-center">Status</th>
+                            {% if member_summary.member_name == "MASJID KHAJANCHI" %}
+
+                                <th class="text-center">Remarks</th>
+                            {% else %}
+                                <th class="text-center">Status</th>   
+                            {% endif %}                                                             
 
                         </tr>
 
@@ -348,29 +355,37 @@
 
                                 <td>{{ row.date.strftime('%d-%b-%Y') if row.date else '-' }}</td>
 
+                                <td>{{ row.contribution_date.strftime('%d-%b-%Y') if row.contribution_date else '-' }}</td>
+
                                 <td class="text-end">
                                     ₹ {{ "{:,.2f}".format(row.amount) }}
                                 </td>
                                 <td class="text-center">
                                     {{ row.contribution_mode if row.contribution_mode else "-" }}
                                 </td>
-                                <td class="text-center">
+                                {% if row.member_name == "MASJID KHAJANCHI" %}  
+                                    <td class="text-center">
+                                    {{ row.remarks if row.remarks else "-" }}
+                                    </td>
+                                {% else %}
+                                    <td class="text-center">
 
-                                    {% if row.status == "Paid" %}
+                                        {% if row.status == "Paid" %}
 
-                                        <span class="badge bg-success">
-                                            Paid
-                                        </span>
+                                            <span class="badge bg-success">
+                                                Paid
+                                            </span>
 
-                                    {% else %}
+                                        {% else %}
 
-                                        <span class="badge bg-danger">
-                                            Due
-                                        </span>
+                                            <span class="badge bg-danger">
+                                                Due
+                                            </span>
 
-                                    {% endif %}
+                                        {% endif %}
 
-                                </td>
+                                    </td>
+                                {% endif %}                                    
 
                             </tr>
 
