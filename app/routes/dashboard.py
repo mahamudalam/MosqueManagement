@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from sqlalchemy import func, extract
+from zoneinfo import ZoneInfo
 
 from app import db
 from app.models import (
@@ -22,8 +23,10 @@ from app.routes.access import role_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
+IST = ZoneInfo("Asia/Kolkata")
+
 def get_dashboard_data():
-    today = datetime.today()
+    today = datetime.now(IST)
     current_month = today.month
     current_year = today.year
 
@@ -123,7 +126,8 @@ def get_dashboard_data():
         "Imam_salary_contribution_total": imam_salary_contribution_total,
         "monthly_total": monthly_total,
         "general_contribution_total": general_contribution_total,
-        "current_month_year": today.strftime("%B %Y"),
+        #"current_month_year": today.strftime("%B %Y"),
+        "current_month_year": datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%B %Y"),
         "monthly_expense": monthly_expense,
         "remaining_balance": (monthly_total + last_month_total_save) - monthly_expense,
     }

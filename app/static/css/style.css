@@ -183,3 +183,120 @@ body{
     background: #146c43;
     transform: translateY(-4px);
 }
+
+
+
+/* ===================================
+   Responsive Design
+=================================== */
+
+@media (max-width:991px){
+
+    .navbar{
+        position:fixed;
+        background:rgba(196,211,196,.95);
+    }
+
+    .hero,
+    .hero-overlay{
+        min-height:auto;
+    }
+
+    .hero-overlay{
+        padding:120px 0 60px;
+    }
+
+    .hero-title{
+        font-size:50px;
+        text-align:center;
+    }
+
+    .hero-title span{
+        display:inline;
+    }
+
+    .hero-description{
+        font-size:19px;
+        text-align:center;
+        margin:auto;
+    }
+
+    .hero h5{
+        text-align:center;
+    }
+
+    .prayer-card{
+        max-width:420px;
+        margin:auto;
+    }
+}
+
+
+@media (max-width:768px){
+
+    .logo{
+        width:42px;
+    }
+
+    .brand-title{
+        font-size:28px;
+    }
+
+    .brand-sub{
+        font-size:13px;
+    }
+
+    .hero-title{
+        font-size:42px;
+        line-height:1.2;
+    }
+
+    .hero-description{
+        font-size:17px;
+    }
+
+    .prayer-card{
+        border-radius:18px;
+        padding:18px;
+    }
+
+    .prayer-card h4{
+        font-size:24px;
+        text-align:center;
+    }
+
+    .prayer-card td{
+        font-size:15px;
+        padding:12px 0;
+    }
+
+}
+
+
+@media (max-width:576px){
+
+    .hero-overlay{
+        padding:100px 0 40px;
+    }
+
+    .hero-title{
+        font-size:34px;
+    }
+
+    .hero-description{
+        font-size:16px;
+    }
+
+    .brand-title{
+        font-size:24px;
+    }
+
+    .brand-sub{
+        font-size:12px;
+    }
+
+    .logo{
+        width:38px;
+    }
+
+}
