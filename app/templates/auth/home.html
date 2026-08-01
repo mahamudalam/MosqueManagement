@@ -81,7 +81,7 @@ align-items:center;
 
 }
 
-.hero h1{
+/* .hero h1{
 
 font-size:70px;
 
@@ -97,6 +97,23 @@ color:white;
 
 max-width:600px;
 
+} */
+
+ .hero-title{
+    font-size:70px;
+    font-weight:700;
+    line-height:1.1;
+    color:#fff;
+}
+
+.hero-title span{
+    display:block;
+}
+
+.hero-description{
+    font-size:22px;
+    color:#fff;
+    max-width:600px;
 }
 
 .prayer-card{
@@ -240,23 +257,27 @@ footer{
 
 <div class="collapse navbar-collapse" id="menu">
 
-<ul class="navbar-nav ms-auto">
+<ul class="navbar-nav ms-auto align-items-lg-center">
 
-<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+<li class="nav-item">
+    <a class="nav-link active" href="#">Home</a>
+</li>
 
-<li class="nav-item"><a class="nav-link active"  href="#">About</a></li>
+<li class="nav-item">
+    <a class="nav-link active" href="#">About</a>
+</li>
 
-<!-- <li class="nav-item"><a class="nav-link" href="#">Features</a></li> -->
+<li class="nav-item">
+    <a class="nav-link active" href="/contact">Contact</a>
+</li>
 
-<!-- <li class="nav-item"><a class="nav-link" href="#">Gallery</a></li> -->
-
-<li class="nav-item"><a class="nav-link active" href="/contact">Contact</a></li>
+<li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+    <a href="{{ url_for('auth.login') }}" class="btn btn-success">
+        <i class="bi bi-person-fill"></i> Login
+    </a>
+</li>
 
 </ul>
-
-<a href="{{ url_for('auth.login') }}" class="btn btn-success ms-4">
-
-<i class="bi bi-person-fill"></i> Login</a>
 
 </div>
 
@@ -274,33 +295,22 @@ footer{
 
 <div class="container">
 
-<div class="row align-items-center">
+<div class="row align-items-center gy-5">
 
-<div class="col-lg-7 text-white">
+<div class="col-lg-7 text-white text-center text-lg-start">
 
 <h5 class="text-warning mb-3">
-
-السلام عليكم
-
+    السلام عليكم
 </h5>
 
-<h1 class="display-2 fw-bold">
-
-Welcome to<br>
-
-<span class="text-white">
-
-Jama Masjid Durga Nagar 
-
-</span>
-
+<h1 class="hero-title">
+    Welcome to
+    <span>Jama Masjid Durga Nagar</span>
 </h1>
 
-<p class="lead mt-4">
-
-Manage members, Friday collections, Imam salary,
-monthly reports and donations in one place.
-
+<p class="hero-description mt-4">
+    Manage members, Friday collections, Imam salary,
+    monthly reports and donations in one place.
 </p>
 
 <div class="mt-4">
@@ -313,7 +323,7 @@ monthly reports and donations in one place.
 
 </div>
 
-<div class="col-lg-4 offset-lg-1">
+<div class="col-lg-4 offset-lg-1 mt-4 mt-lg-0">
 <div class="card prayer-card shadow-lg">
 <div class="card-body">
 
@@ -400,10 +410,10 @@ monthly reports and donations in one place.
                         <i class="bi bi-cash-stack"></i>
                     </div>
 
-                    <h4 class="mb-3">Friday Donation Report</h4>
+                    <h4 class="mb-3">Friday Contribution Report</h4>
 
                     <p class="text-muted">
-                        View monthly Friday donation collections and member-wise contribution reports.
+                        View monthly Friday collections and member-wise contribution reports.
                     </p>
 
                     <a href="{{ url_for('reports.friday_report',source='user') }}"
