@@ -300,3 +300,152 @@ body{
     }
 
 }
+
+
+
+
+/* ======================================================
+   PUBLIC NAVBAR
+   (Independent of Home Page Navbar)
+====================================================== */
+
+.public-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+
+    background:rgba(196, 211, 196, 0.74);
+    backdrop-filter: blur(8px);
+
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+    padding: 8px 0;
+}
+
+/* Brand */
+
+.public-navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.public-navbar .navbar-brand img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 12px;
+}
+
+.public-navbar .brand-title {
+    font-size: 28px;
+    font-weight: 700;
+    color:#ebde68;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.public-navbar .brand-sub {
+    font-size: 13px;
+    color: #6c757d;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+/* Navigation */
+
+.public-navbar .navbar-nav {
+    align-items: center;
+}
+
+.public-navbar .nav-item {
+    margin-left: 10px;
+}
+
+.public-navbar .nav-link {
+    color: #495057 !important;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+/* Hover (No Text Color Change) */
+
+.public-navbar .nav-link:hover {
+    color: #495057 !important;
+    background-color: rgba(25, 135, 84, 0.08);
+    text-decoration: none;
+}
+
+/* Active */
+
+.public-navbar .nav-link.active {
+    color: #198754 !important;
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+/* Buttons */
+
+.public-navbar .btn {
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 600;
+}
+
+/* Navbar Toggle */
+
+.public-navbar .navbar-toggler {
+    border: none;
+    box-shadow: none !important;
+}
+
+.public-navbar .navbar-toggler:focus {
+    box-shadow: none !important;
+}
+
+/* Mobile */
+
+@media (max-width: 991px) {
+
+    .public-navbar {
+        padding: 10px 0;
+    }
+
+    .public-navbar .navbar-collapse {
+        margin-top: 10px;
+        background: #fff;
+        border-radius: 10px;
+        padding: 10px 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .public-navbar .nav-item {
+        margin-left: 0;
+    }
+
+    .public-navbar .nav-link {
+        padding: 12px 0;
+    }
+
+    .public-navbar .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .public-navbar .brand-title {
+        font-size: 24px;
+    }
+
+    .public-navbar .brand-sub {
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .public-navbar .navbar-brand img {
+        width: 50px;
+        height: 50px;
+    }
+}
