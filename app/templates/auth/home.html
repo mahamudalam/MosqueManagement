@@ -488,12 +488,16 @@ Total Visitors : {{ "{:,}".format(total_visitors) }}
 
 </footer>
 
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <button id="backToTop" class="back-to-top">
     <i class="bi bi-arrow-up"></i>
 </button>
 <script src="{{ url_for('static', filename='js/home.js') }}"></script>
-</body>
-</html>
+
+ {% include 'partials/monthly_report_modal.html' %}
+ <script src="{{ url_for('static', filename='js/monthly_previous_report.js') }}"></script>
+
 </body>
 </html>

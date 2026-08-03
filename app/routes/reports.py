@@ -6,6 +6,7 @@ from flask_login import login_required
 from app.models import FridayDonation, ImamSalaryContribution, MonthlyReport
 from app.models.member import Member
 from app.routes.access import role_required
+import calendar
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 
@@ -169,4 +170,25 @@ def download_report(id):
     return send_file(
         report.PDF_Path,
         as_attachment=True
+    )
+
+# ==========================================
+# Previous Month Reports 
+# ==========================================
+
+@reports_bp.route("/monthly-report")
+def monthly_report():
+
+    year = request.args.get("year", type=int)
+    month = request.args.get("month", type=int)
+
+    report = MonthlyReport.query.filter_by(
+        report_year=year,
+        report_month=month
+    ).first()
+
+    return render_template(
+        "partials/monthly_report_card.html",
+        report=report,
+        month_name=calendar.month_name[month]
     )
