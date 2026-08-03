@@ -314,7 +314,7 @@ body{
     top: 0;
     z-index: 1050;
 
-    background:rgba(196, 211, 196, 0.74);
+    background:rgba(152, 165, 152, 0.74);
     backdrop-filter: blur(8px);
 
     border-bottom: 1px solid #e9ecef;
@@ -342,14 +342,14 @@ body{
 .public-navbar .brand-title {
     font-size: 28px;
     font-weight: 700;
-    color:#ebde68;
+    color:#f1e25a;
     line-height: 1.1;
     margin: 0;
 }
 
 .public-navbar .brand-sub {
     font-size: 13px;
-    color: #6c757d;
+    color: #02060a;
     letter-spacing: 2px;
     margin: 0;
 }
