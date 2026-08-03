@@ -1,0 +1,165 @@
+{% if report %}
+
+<div class="card shadow border-0">
+
+    <!-- Header -->
+    <div class="card-header bg-success text-white">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+            <div>
+                <h4 class="mb-0">
+                    <i class="bi bi-calendar-month"></i>
+                    Monthly Report
+                </h4>
+
+                <small>
+                    <small>{{ month_name }} {{ report.report_year }}</small>
+                </small>
+            </div>
+
+           <!-- <div class="mt-2 mt-md-0">
+                <a href="{{ url_for('reports.download_report', id=report.report_id) }}"
+                   class="btn btn-light btn-sm">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    Download PDF
+                </a>
+            </div>-->
+
+        </div>
+    </div>
+
+    <div class="card-body">
+
+        <!-- Financial Summary -->
+        <h5 class="text-success mb-3">
+            <i class="bi bi-cash-stack"></i>
+            Financial Summary
+        </h5>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <tr>
+                    <th>Opening Balance</th>
+                    <td class="text-end fw-bold">
+                        ₹ {{ "{:,.2f}".format(report.OpeningBalance) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Total Income</th>
+                    <td class="text-end text-success fw-bold">
+                        ₹ {{ "{:,.2f}".format(report.TotalIncome) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Total Expense</th>
+                    <td class="text-end text-danger fw-bold">
+                        ₹ {{ "{:,.2f}".format(report.TotalExpense) }}
+                    </td>
+                </tr>
+
+                <tr class="table-success">
+                    <th>Closing Balance</th>
+                    <td class="text-end fw-bold">
+                        ₹ {{ "{:,.2f}".format(report.ClosingBalance) }}
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <!-- Contribution Details -->
+
+        <h5 class="text-success mt-4 mb-3">
+            <i class="bi bi-wallet2"></i>
+            Contribution Details
+        </h5>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <tr>
+                    <th>Friday Collection</th>
+                    <td class="text-end">
+                        ₹ {{ "{:,.2f}".format(report.Friday_contribution) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="ps-4">
+                        ├─ Friday Money
+                    </td>
+
+                    <td class="text-end">
+                        ₹ {{ "{:,.2f}".format(report.friday_money_contribution) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="ps-4">
+                        ├─ Jumma Namaz
+                    </td>
+
+                    <td class="text-end">
+                        ₹ {{ "{:,.2f}".format(report.friday_jumma_namaz_contribution) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="ps-4">
+                        └─ Rice Contribution
+                    </td>
+
+                    <td class="text-end">
+                        ₹ {{ "{:,.2f}".format(report.friday_rice_contribution) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>General Contribution</th>
+                    <td class="text-end">
+                        ₹ {{ "{:,.2f}".format(report.General_contribution) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Imam Contribution</th>
+                    <td class="text-end">
+                        ₹ {{ "{:,.2f}".format(report.Imam_contribution) }}
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="card-footer text-muted">
+
+        <i class="bi bi-clock-history"></i>
+
+        Generated On :
+        {{ report.generated_on.strftime("%d-%b-%Y %I:%M %p") }}
+
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="alert alert-warning text-center">
+
+    <i class="bi bi-exclamation-circle"></i>
+
+    No Monthly Report found for the selected Year and Month.
+
+</div>
+
+{% endif %}

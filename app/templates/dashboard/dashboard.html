@@ -4,4 +4,8 @@
 
 {% include "partials/dashboard_cards.html" %}
 
+ {% include 'partials/monthly_report_modal.html' %}
+
+ <script src="{{ url_for('static', filename='js/monthly_previous_report.js') }}"></script>
+
 {% endblock %}
