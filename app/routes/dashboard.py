@@ -104,7 +104,7 @@ def get_dashboard_data():
     )
 
     last_month_total_save = (
-        db.session.query(MonthlyReport.ClosingBalance)
+        db.session.query(MonthlyReport.closing_balance)
         .order_by(MonthlyReport.report_id.desc())
         .limit(1)
         .scalar()

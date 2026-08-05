@@ -62,9 +62,17 @@
                         Generate monthly financial report PDF.
                     </p>
 
-                    <a href="#generateReport" class="btn btn-danger">
+                    <!--<a href="#generateReport" class="btn btn-danger">
+                        <i class="fa fa-file-pdf"></i> Generate Report
+                    </a>-->
+                    <a href="{{ url_for('reports.friday_due_report',source='dashboard') }}" class="btn btn-danger">
                         <i class="fa fa-file-pdf"></i> Generate Report
                     </a>
+
+                    <!--<a href="{{ url_for('reports.friday_due_report') }}"
+                        class="btn btn-danger">
+                        Open Report
+                    </a>-->
 
                 </div>
             </div>

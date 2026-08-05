@@ -117,22 +117,22 @@ class PDFService:
 
             ["Description", "Amount (INR)"],
 
-            ["Opening Balance", f"{report.OpeningBalance:,.2f}"],
+            ["Opening Balance", f"{report.opening_balance:,.2f}"],
 
              ["Friday Contribution", ""],
             ["• Cash Collection", f"{report.friday_money_contribution:,.2f}"],
             ["• Jumma Namaz Collection", f"{report.friday_jumma_namaz_contribution:,.2f}"],
             ["• Rice Collection", f"{report.friday_rice_contribution:,.2f}"],
 
-            ["General Contribution", f"{report.General_contribution:,.2f}"],
+            ["General Contribution", f"{report.general_contribution:,.2f}"],
 
-            ["Imam Contribution", f"{report.Imam_contribution:,.2f}"],
+            ["Imam Contribution", f"{report.imam_contribution:,.2f}"],
 
-            ["Total Income", f"{report.TotalIncome:,.2f}"],
+            ["Total Income", f"{report.total_income:,.2f}"],
 
-            ["Total Expense", f"{report.TotalExpense:,.2f}"],
+            ["Total Expense", f"{report.total_expense:,.2f}"],
 
-            ["Closing Balance", f"{report.ClosingBalance:,.2f}"]
+            ["Closing Balance", f"{report.closing_balance:,.2f}"]
 
         ]
 

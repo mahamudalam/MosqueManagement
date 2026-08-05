@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Friday Due Report</h2>
+
+    <form method="GET">
+
+        <input type="hidden" name="search" value="1">
+        <input type="hidden" name="source" value="{{ request.args.get('source', 'home') }}">
+
+        <div class="row">
+
+            <div class="col-md-3">
+
+                <label>Year</label>
+
+                <select class="form-select" name="year">
+
+                    {% for y in range(2026, 2036) %}
+                        <option value="{{ y }}"
+                            {% if y==year %}selected{% endif %}>
+                            {{ y }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="col-md-2 mt-4">
+
+                <button class="btn btn-primary">
+                    Search
+                </button>
+                <a href="{{ url_for('reports.reports') }}" class="btn btn-secondary">
+                        <i class="fa fa-home"></i> Back
+                </a>
+            </div>
+
+        </div>
+
+    </form>
+
+    <hr>
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Total Members</h6>
+                    <h3>{{ summary.total_members }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-danger shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Members With Due</h6>
+                    <h3 class="text-danger">{{ summary.members_with_due }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-warning shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Total Due Fridays</h6>
+                    <h3 class="text-warning">{{ summary.total_due_fridays }}</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <table class="table table-striped table-hover">
+
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Member</th>
+                <th class="text-center">Due Fridays</th>
+                <th>Due Date List</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for row in report_data %}
+
+        <tr>
+
+            <td>{{ loop.index }}</td>
+
+            <td>{{ row.member_name }}</td>
+
+            <td class="text-center">
+                <span class="badge bg-danger fs-6">
+                    {{ row.due_count }}
+                </span>
+            </td>
+
+            <td>
+
+                {% for d in row.due_dates %}
+                    <span class="badge bg-warning text-dark mb-1">
+                        {{ d }}
+                    </span>
+                {% endfor %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
