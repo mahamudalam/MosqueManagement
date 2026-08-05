@@ -181,15 +181,15 @@ class MonthlyReportService:
         report = MonthlyReport(
             report_year=report_year,
             report_month=report_month,
-            OpeningBalance=opening_balance,
+            opening_balance=opening_balance,
             friday_money_contribution=friday_money,
             friday_jumma_namaz_contribution=friday_Jumma_Namaz,
             friday_rice_contribution=friday_rice,
-            General_contribution=general,
-            Imam_contribution=imam,
-            TotalIncome=total_income,
-            TotalExpense=total_expense,
-            ClosingBalance=closing_balance,
+            general_contribution=general,
+            imam_contribution=imam,
+            total_income=total_income,
+            total_expense=total_expense,
+            closing_balance=closing_balance,
             generated_on = datetime.now(ZoneInfo("Asia/Kolkata"))
         )
 

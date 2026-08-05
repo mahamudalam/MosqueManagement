@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request,send_file
-from datetime import datetime
+from datetime import date, datetime
 from sqlalchemy import extract
 from flask_login import login_required
 
@@ -13,6 +13,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.services.report_service import MonthlyReportService
 from app.services.imam_salary_contri_report_service import ImamSalaryContributionReportService
 from app.services.friday_report_service import FridayReportService
+from app.services.friday_due_report_service import FridayDueReportService
 
 reports_bp = Blueprint(
     "reports",
@@ -153,10 +154,10 @@ def view_report(id):
 
     report = MonthlyReport.query.get_or_404(id)
 
-    print(report.PDF_Path)
+    #print(report.pdf_path)
 
     return send_file(
-        report.PDF_Path,
+        report.pdf_path,
         mimetype="application/pdf"
     )    
 
@@ -168,7 +169,7 @@ def download_report(id):
     report = MonthlyReport.query.get_or_404(id)
 
     return send_file(
-        report.PDF_Path,
+        report.pdf_path,
         as_attachment=True
     )
 
@@ -191,4 +192,28 @@ def monthly_report():
         "partials/monthly_report_card.html",
         report=report,
         month_name=calendar.month_name[month]
+    )
+
+# ==========================================
+# Friday Due Reports 
+# ==========================================
+
+@reports_bp.route("/friday-due-report", methods=["GET"])
+@login_required
+def friday_due_report():
+
+    year = request.args.get("year", type=int)
+    if not year:
+        year = date.today().year
+
+    service = FridayDueReportService(year)
+    data = service.generate()
+    report_data = data["report_data"]
+    summary = data["summary"]
+
+    return render_template(
+        "reports/friday_due_report.html",
+        report_data=report_data,
+        summary=summary,
+        year=year
     )
