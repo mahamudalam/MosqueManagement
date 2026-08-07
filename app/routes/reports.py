@@ -14,6 +14,13 @@ from app.services.report_service import MonthlyReportService
 from app.services.imam_salary_contri_report_service import ImamSalaryContributionReportService
 from app.services.friday_report_service import FridayReportService
 from app.services.friday_due_report_service import FridayDueReportService
+from app.services.friday_due_report_pdf import generate_friday_due_pdf
+from app.services.imam_contri_due_report_service import (
+    ImamContriDueReportService
+)
+from app.services.imam_contri_due_report_pdf import (
+    generate_imam_contri_due_pdf
+)
 
 reports_bp = Blueprint(
     "reports",
@@ -216,4 +223,74 @@ def friday_due_report():
         report_data=report_data,
         summary=summary,
         year=year
+    )
+
+# ==========================================
+# Friday Due Reports PDF Generation
+# ==========================================
+
+@reports_bp.route("/friday-due-report/pdf", methods=["GET"])
+@login_required
+def friday_due_report_pdf():
+
+    year = request.args.get("year", type=int)
+
+    if not year:
+        year = date.today().year
+
+    service = FridayDueReportService(year)
+
+    data = service.generate()
+
+    return generate_friday_due_pdf(
+        year=year,
+        report_data=data["report_data"],
+        summary=data["summary"]
+    )
+
+# ==========================================
+# Imam Due Reports Generation
+# ==========================================
+
+@reports_bp.route("/imam-due-report", methods=["GET"])
+@login_required
+def imam_contri_due_report():
+
+    year = request.args.get("year", type=int)
+
+    if not year:
+        year = date.today().year
+
+    service = ImamContriDueReportService(year)
+
+    data = service.generate()
+
+    return render_template(
+        "reports/imam_contri_due_report.html",
+        report_data=data["report_data"],
+        summary=data["summary"],
+        year=year
+    )
+
+# ==========================================
+# Imam Due Reports PDF Generation
+# ==========================================
+
+@reports_bp.route("/imam-due-report/pdf", methods=["GET"])
+@login_required
+def imam_due_report_pdf():
+
+    year = request.args.get("year", type=int)
+
+    if not year:
+        year = date.today().year
+
+    service = ImamContriDueReportService(year)
+
+    data = service.generate()
+
+    return generate_imam_contri_due_pdf(
+        year=year,
+        report_data=data["report_data"],
+        summary=data["summary"]
     )
