@@ -19,7 +19,11 @@ class ContactRequest(db.Model):
         nullable=False,
         index=True
     )
-
+    email = db.Column(
+        db.String(255),
+        nullable=True,
+        index=True
+    )
     suggestion = db.Column(
         db.Text,
         nullable=False
