@@ -534,3 +534,26 @@ body{
 .report-scroll::-webkit-scrollbar-thumb:hover{
     background:#999;
 }
+
+
+
+
+.monthly-report-btn {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.monthly-report-btn i {
+    margin-right: 6px;
+}
+
+@media (max-width: 576px) {
+
+    .monthly-report-btn {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
