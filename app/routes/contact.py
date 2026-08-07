@@ -23,7 +23,10 @@ def contact():
 
         mobile = request.form["mobile"].strip()
 
+        email = request.form["email"].strip()
+
         suggestion = request.form["suggestion"].strip()
+        
 
         if not name or not mobile or not suggestion:
 
@@ -41,7 +44,7 @@ def contact():
             name=name,
 
             mobile=mobile,
-
+            email=email,
             suggestion=suggestion
 
         )
