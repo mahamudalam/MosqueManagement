@@ -1,12 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash,jsonify
 from flask_login import login_required
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,date
 
 from app import db
 from app.models import Member, FridayDonation,ContributionMode
 #from app.models.friday_donation import FridayDonation, ContributionMode
 from app.routes.access import role_required
 from zoneinfo import ZoneInfo
+from app.services.friday_report_service import (
+    FridayReportService
+)
 
 friday_bp = Blueprint("friday", __name__)
 
@@ -107,4 +110,56 @@ def friday_donation():
         members=members, 
         donations=donations,
         fridays=fridays, 
+        today_date=date.today().isoformat(),
         current_month=current_month)
+
+
+@friday_bp.route("/get-member-friday-contribution/<int:member_id>")
+@login_required
+@role_required("Admin", "Committee Member")
+def get_member_friday_contribution(member_id):
+
+    member = Member.query.filter_by(id=member_id).first()
+
+    if not member:
+        return jsonify({
+            "success": False,
+            "message": "Member not found"
+        }), 404
+
+    selected_year = request.args.get(
+        "year", date.today().year, type=int
+    )
+
+    service = FridayReportService(
+        year=selected_year,
+        member_id=member_id
+    )
+
+    report = service.generate()
+
+    summary = report.get("member_summary") or {}
+
+    due_dates = summary.get("due_months", [])
+    advance_dates = summary.get("advance_months", [])
+
+    return jsonify({
+        "success": True,
+
+        "member_name": member.name,
+
+        "total_fridays": summary.get("total_fridays", 0),
+
+        "due_dates": due_dates,
+        "due_count": len(due_dates),
+
+        "paid_count": summary.get("paid_friday_count", 0),
+
+        "advance_dates": advance_dates,
+        "advance_count": len(advance_dates),
+
+        "advance_amount": str(
+            summary.get("advance_amount", 0)
+        )
+    })
+

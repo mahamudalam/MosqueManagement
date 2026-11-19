@@ -2,7 +2,7 @@
 
 {% block content %}
 
-{% include "base.html" %}
+
 
 <div class="container py-4">
 
@@ -35,6 +35,99 @@
 
             <form method="POST" id="imamContributionForm">
 
+ 
+                <!-- Member Due Details -->
+                <div id="memberDueSummary" class="mt-3" style="display: none;">
+
+                    <div class="card border-warning shadow-sm">
+
+                        <div class="card-header bg-warning-subtle fw-bold">
+                            <i class="fa fa-calendar-alt me-2"></i>
+                            Member Contribution Details
+                        </div>
+
+                        <div class="card-body">
+
+                            <!-- Pending Due Summary -->
+                            <div class="row">
+
+                                <!-- Due Count -->
+                                <div class="col-6 mb-3">
+                                    <label class="text-muted small">Total Due Count</label>
+                                    <h4 class="text-danger mb-0">
+                                        <span id="dueCount">0</span> Months
+                                    </h4>
+                                </div>
+
+                                <!-- Due Amount -->
+                                <div class="col-6 mb-3">
+                                    <label class="text-muted small">Total Due Amount</label>
+                                    <h4 class="text-danger mb-0">
+                                        ₹ <span id="dueAmount">0.00</span>
+                                    </h4>
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- Pending Months -->
+                            <div class="mb-3">
+
+                                <label class="fw-bold mb-2">
+                                    <i class="fa fa-exclamation-circle text-danger me-1"></i>
+                                    Pending Due Months
+                                </label>
+
+                                <div id="dueMonths" class="d-flex flex-wrap gap-2">
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- Advance Payment Summary -->
+                            <div class="row">
+
+                                <!-- Advance Count -->
+                                <div class="col-6 mb-3">
+                                    <label class="text-muted small">
+                                        Advance Paid Count
+                                    </label>
+
+                                    <h4 class="text-success mb-0">
+                                        <span id="advanceCount">0</span> Months
+                                    </h4>
+                                </div>
+
+                                <!-- Advance Amount -->
+                                <div class="col-6 mb-3">
+                                    <label class="text-muted small">
+                                        Total Advance Amount
+                                    </label>
+
+                                    <h4 class="text-success mb-0">
+                                        ₹ <span id="advanceAmount">0.00</span>
+                                    </h4>
+                                </div>
+
+                            </div>
+
+                            <!-- Advance Months -->
+                            <label class="fw-bold mb-2">
+                                <i class="fa fa-check-circle text-success me-1"></i>
+                                Advance Paid Months
+                            </label>
+
+                            <div id="advanceMonths" class="d-flex flex-wrap gap-2">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
                 <div class="row">
 
                     <!-- Member -->
@@ -44,21 +137,19 @@
                             Member <span class="text-danger">*</span>
                         </label>
 
-                        <select id="member"
-                                name="member_id"
-                                class="form-select"
-                                required>
+                        <select
+                            id="member"
+                            name="member_id"
+                            data-api-url="{{ url_for('salary.get_member_imam_contribution', member_id=0) }}"
+                            class="form-select"
+                            required>
 
-                            <option value="">
-                                Select Member
-                            </option>
+                            <option value="">Select Member</option>
 
                             {% for member in members %}
-
-                            <option value="{{ member.id }}">
-                                {{ member.name }}
-                            </option>
-
+                                <option value="{{ member.id }}">
+                                    {{ member.name }}
+                                </option>
                             {% endfor %}
 
                         </select>
@@ -113,8 +204,10 @@
 
                         <input
                             type="date"
+                            id="contribution_date"
                             name="contribution_date"
                             class="form-control"
+                            value="{{ current_date }}"
                             required>
 
                     </div>
@@ -130,6 +223,7 @@
                             type="number"
                             step="0.01"
                             min="1"
+                            id="amount"
                             name="amount"
                             class="form-control"
                             placeholder="Enter amount"
@@ -164,6 +258,7 @@
                         Save Contribution
 
                     </button>
+                    
 
                 </div>
 
@@ -173,135 +268,256 @@
 
     </div>
 
-    <!-- Contribution History -->
-    <div class="card shadow-sm border-0">
+    
 
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+<!-- Contribution History -->
+<div class="card shadow-sm border-0">
 
-            <span>
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
 
-                <i class="fa fa-history me-2"></i>
+        <span>
+            <i class="fa fa-history me-2"></i>
+            Contribution History
+        </span>
 
-                Contribution History
+        <button class="btn btn-success"
+                type="button"
+                id="toggleContributionFilter">
 
-            </span>
+            <i class="fa fa-filter me-1"></i>
+            Show Contribution
 
-            <span class="badge bg-light text-primary">
+        </button>
 
-                Total Records : {{ contributions|length }}
+        <span class="badge bg-light text-primary">
+            Total Records: {{ contributions|length }}
+        </span>
 
-            </span>
+    </div>
+
+    <div class="card-body">
+
+        <!-- Initially Hidden Filter Section -->
+        <div id="contributionFilterSection"
+             style="display:none;">
+
+            <div class="row mb-4">
+
+                <div class="col-lg-4 col-md-6 mb-2">
+
+                    <label class="form-label fw-bold">
+                        <i class="fa fa-calendar me-1"></i>
+                        Select Contribution Date
+                    </label>
+
+                    <input type="date"
+                           id="historyContributionDate"
+                           class="form-control">
+
+                </div>
+
+                <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
+
+                    <button type="button"
+                            class="btn btn-primary w-100"
+                            id="filterContributionBtn">
+
+                        <i class="fa fa-filter me-1"></i>
+                        Filter
+
+                    </button>
+
+                </div>
+
+                <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
+
+                    <button type="button"
+                            class="btn btn-secondary w-100"
+                            id="resetContributionFilter">
+
+                        <i class="fa fa-refresh me-1"></i>
+                        Reset
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <hr>
 
         </div>
 
-        <div class="card-body">
+        <!-- Contribution Table: Always Visible -->
+        <div class="table-responsive">
 
-            <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
 
-                <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
 
-                    <thead class="table-primary">
+                    <tr>
+                        <th>Member</th>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Date</th>
+                        <th class="text-end">Amount</th>
+                        <th>Remarks</th>
+                    </tr>
 
-                        <tr>
+                </thead>
 
-                            <th>Member</th>
+                <tbody>
 
-                            <th>Month</th>
+                    {% if contributions %}
 
-                            <th>Year</th>
+                        {% for c in contributions %}
 
-                            <th>Date</th>
+                        <tr class="contribution-row"
+                            data-date="{{ c.contribution_date.strftime('%Y-%m-%d') }}"
+                            data-amount="{{ c.amount }}">
 
-                            <th class="text-end">
-                                Amount
-                            </th>
+                            <td>{{ c.member.name }}</td>
 
-                            <th>Remarks</th>
+                            <td>{{ months[c.salary_month-1][1] }}</td>
 
-                        </tr>
+                            <td>{{ c.salary_year }}</td>
 
-                    </thead>
+                            <td>{{ c.contribution_date.strftime("%d-%b-%Y") }}</td>
 
-                    <tbody>
+                            <td class="text-end">
+                                ₹ {{ "{:,.2f}".format(c.amount) }}
+                            </td>
 
-                        {% if contributions %}
-
-                            {% for c in contributions %}
-
-                            <tr>
-
-                                <td>{{ c.member.name }}</td>
-
-                                <td>{{ months[c.salary_month-1][1] }}</td>
-
-                                <td>{{ c.salary_year }}</td>
-
-                                <td>{{ c.contribution_date.strftime("%d-%b-%Y") }}</td>
-
-                                <td class="text-end">
-
-                                    ₹ {{ "{:,.2f}".format(c.amount) }}
-
-                                </td>
-
-                                <td>{{ c.remarks or "-" }}</td>
-
-                            </tr>
-
-                            {% endfor %}
-
-                        {% else %}
-
-                            <tr>
-
-                                <td colspan="6"
-                                    class="text-center text-muted py-4">
-
-                                    <i class="fa fa-inbox fa-2x mb-2"></i>
-
-                                    <br>
-
-                                    No contribution records found.
-
-                                </td>
-
-                            </tr>
-
-                        {% endif %}
-
-                    </tbody>
-
-                    <tfoot class="table-secondary">
-
-                        <tr>
-
-                            <th colspan="4" class="text-end">
-
-                                Total Contribution
-
-                            </th>
-
-                            <th class="text-end">
-
-                                ₹ {{ "{:,.2f}".format(total_amount or 0) }}
-
-                            </th>
-
-                            <th></th>
+                            <td>{{ c.remarks or "-" }}</td>
 
                         </tr>
 
-                    </tfoot>
+                        {% endfor %}
 
-                </table>
+                    {% else %}
 
-            </div>
+                        <tr>
+                            <td colspan="6"
+                                class="text-center text-muted py-4">
+                                No contribution records found.
+                            </td>
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+                <tfoot class="table-secondary">
+
+                    <tr>
+                        <th colspan="4" class="text-end">
+                            Total Contribution
+                        </th>
+
+                        <th class="text-end">
+                            ₹ <span id="filteredContributionTotal">
+                                {{ "{:,.2f}".format(total_amount or 0) }}
+                            </span>
+                        </th>
+
+                        <th></th>
+                    </tr>
+
+                </tfoot>
+
+            </table>
+
+        </div>
+
+        <div id="noContributionFound"
+             class="alert alert-warning text-center"
+             style="display:none;">
+
+            No contributions found for the selected date.
 
         </div>
 
     </div>
 
 </div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggleBtn = document.getElementById("toggleContributionFilter");
+    const filterSection = document.getElementById("contributionFilterSection");
+
+    const dateInput = document.getElementById("historyContributionDate");
+    const filterBtn = document.getElementById("filterContributionBtn");
+    const resetBtn = document.getElementById("resetContributionFilter");
+
+    const rows = document.querySelectorAll(".contribution-row");
+    const totalElement = document.getElementById("filteredContributionTotal");
+    const noRecords = document.getElementById("noContributionFound");
+
+    // Show / Hide filter options
+    toggleBtn.addEventListener("click", function () {
+
+        const isHidden = filterSection.style.display === "none";
+
+        filterSection.style.display = isHidden ? "block" : "none";
+
+        toggleBtn.innerHTML = isHidden
+            ? '<i class="fa fa-eye-slash me-1"></i> Hide Filter'
+            : '<i class="fa fa-filter me-1"></i> Show Contribution';
+
+    });
+
+    // Filter contributions by date
+    function filterContributions() {
+
+        const selectedDate = dateInput.value;
+
+        let total = 0;
+        let visibleCount = 0;
+
+        rows.forEach(function (row) {
+
+            const rowDate = row.dataset.date;
+            const amount = parseFloat(row.dataset.amount) || 0;
+
+            const showRow = !selectedDate || rowDate === selectedDate;
+
+            row.style.display = showRow ? "" : "none";
+
+            if (showRow) {
+                total += amount;
+                visibleCount++;
+            }
+
+        });
+
+        totalElement.textContent = total.toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        noRecords.style.display = visibleCount === 0 ? "block" : "none";
+
+    }
+
+    filterBtn.addEventListener("click", filterContributions);
+
+    dateInput.addEventListener("change", filterContributions);
+
+    // Reset all records
+    resetBtn.addEventListener("click", function () {
+
+        dateInput.value = "";
+
+        filterContributions();
+
+    });
+
+});
+</script>
 
 <script>
 
@@ -322,5 +538,176 @@ function confirmContribution() {
 }
 
 </script>
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const memberDropdown = document.getElementById("member");
+    const amountInput = document.getElementById("amount");
+
+    const dueSummary = document.getElementById("memberDueSummary");
+    const dueCount = document.getElementById("dueCount");
+    const dueAmount = document.getElementById("dueAmount");
+    const dueMonths = document.getElementById("dueMonths");
+
+    // Advance elements
+    const advanceCount = document.getElementById("advanceCount");
+    const advanceAmount = document.getElementById("advanceAmount");
+    const advanceMonthsDiv = document.getElementById("advanceMonths");
+
+    if (!memberDropdown || !amountInput) {
+        console.error("Member dropdown or Amount input not found.");
+        return;
+    }
+
+    memberDropdown.onchange = async function () {
+
+        const memberId = this.value;
+
+        console.log("Selected member:", memberId);
+
+        // Reset previous details
+        amountInput.value = "";
+
+        dueCount.textContent = "0";
+        dueAmount.textContent = "0.00";
+        dueMonths.innerHTML = "";
+
+        advanceCount.textContent = "0";
+        advanceAmount.textContent = "0.00";
+        advanceMonthsDiv.innerHTML = "";
+
+        dueSummary.style.display = "none";
+
+        if (!memberId) return;
+
+        try {
+
+            const response = await fetch(
+                `/get-member-imam-contribution/${memberId}`
+            );
+
+            const data = await response.json();
+
+            console.log("API response:", data);
+
+            if (response.ok && data.success) {
+
+                // 1. Auto-fill monthly contribution amount
+                amountInput.value = data.amount;
+
+                // 2. Display total due count
+                dueCount.textContent = data.due_count || 0;
+
+                // 3. Display total due amount
+                dueAmount.textContent = Number(
+                    data.due_amount || 0
+                ).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                // 4. Display pending months
+                const months = data.due_months || [];
+
+                if (months.length > 0) {
+
+                    months.forEach(function (month) {
+
+                        const badge = document.createElement("span");
+
+                        badge.className =
+                            "badge bg-danger p-2 me-1 mb-1";
+
+                        badge.textContent = month;
+
+                        dueMonths.appendChild(badge);
+
+                    });
+
+                } else {
+
+                    const message = document.createElement("span");
+
+                    message.className = "text-success fw-bold";
+                    message.textContent = "No pending dues";
+
+                    dueMonths.appendChild(message);
+
+                }
+
+                // 5. Display advance paid months
+                const advanceList = data.advance_months || [];
+
+                advanceCount.textContent =
+                    data.advance_count ?? advanceList.length;
+
+                advanceAmount.textContent = Number(
+                    data.advance_amount || 0
+                ).toLocaleString("en-IN", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                if (advanceList.length > 0) {
+
+                    advanceList.forEach(function (month) {
+
+                        const badge = document.createElement("span");
+
+                        badge.className =
+                            "badge bg-success p-2 me-1 mb-1";
+
+                        badge.textContent = month;
+
+                        advanceMonthsDiv.appendChild(badge);
+
+                    });
+
+                } else {
+
+                    const message = document.createElement("span");
+
+                    message.className = "text-muted";
+                    message.textContent = "No advance payments";
+
+                    advanceMonthsDiv.appendChild(message);
+
+                }
+
+                // 6. Show contribution summary
+                dueSummary.style.display = "block";
+
+                console.log("Pending months:", months);
+                console.log("Advance months:", advanceList);
+                console.log("Advance amount:", data.advance_amount);
+
+            } else {
+
+                alert(data.message || "Unable to fetch member details.");
+
+            }
+
+        } catch (error) {
+
+            console.error("Error:", error);
+
+            alert("Unable to fetch member contribution details.");
+
+        }
+
+    };
+
+});
+</script>
+
+
+
+
+<!-- <script src="{{ url_for('static', filename='js/imam_salary_contribution.js') }}"></script> -->
 
 {% endblock %}

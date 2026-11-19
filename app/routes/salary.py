@@ -1,10 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash,jsonify
 from flask_login import login_required
-from datetime import datetime
+from datetime import datetime,date
 from decimal import Decimal
 from app import db
 from app.models import Member, ImamSalaryContribution
 from app.routes.access import role_required
+from app.services.imam_salary_contri_report_service import (
+    ImamSalaryContributionReportService
+)
 
 salary_bp = Blueprint("salary", __name__)
 
@@ -104,5 +107,66 @@ def imam_salary():
         contributions=contributions,
         total_amount=total_amount,
         months=MONTHS,
+        current_date=date.today().isoformat(),
         current_year=datetime.today().year
     )
+
+
+@salary_bp.route("/get-member-imam-contribution/<int:member_id>")
+@login_required
+@role_required("Admin", "Committee Member")
+def get_member_imam_contribution(member_id):
+
+    member = Member.query.filter_by(id=member_id).first()
+
+    if not member:
+        return jsonify({
+            "success": False,
+            "message": "Member not found"
+        }), 404
+
+    selected_year = request.args.get(
+        "year", date.today().year, type=int
+    )
+
+    amount = member.imam_salary_contri or 0
+
+    service = ImamSalaryContributionReportService(
+        year=selected_year,
+        member_id=member_id
+    )
+
+    report = service.generate()
+
+    summary = report.get("member_summary") or {}
+
+    # Pending months
+    due_months = summary.get("due_months", [])
+    partial_months = summary.get("partial_months", [])
+
+    pending_months = due_months + partial_months
+
+    # Advance months
+    advance_months = summary.get("advance_months", [])
+    advance_amount = summary.get("advance_amount", 0)
+
+    return jsonify({
+        "success": True,
+        "amount": str(amount),
+
+        "due_months": [
+            f"{month} {selected_year}"
+            for month in pending_months
+        ],
+
+        "due_count": len(pending_months),
+
+        "due_amount": str(summary.get("due_amount", 0)),
+
+        "partial_months": partial_months,
+
+        # New fields
+        "advance_months": advance_months,
+        "advance_count": len(advance_months),
+        "advance_amount": str(advance_amount)
+    })

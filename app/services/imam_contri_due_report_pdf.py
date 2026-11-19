@@ -101,6 +101,12 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
         alignment=TA_LEFT
     )
 
+    amount_style = ParagraphStyle(
+        "AmountStyle",
+        parent=cell_style,
+        alignment=TA_CENTER
+    )
+
     summary_header_style = ParagraphStyle(
         "SummaryHeader",
         parent=styles["Normal"],
@@ -168,6 +174,10 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
             Paragraph(
                 "Total Due Months",
                 summary_header_style
+            ),
+            Paragraph(
+                "Total Due Amount",
+                summary_header_style
             )
         ],
         [
@@ -182,6 +192,10 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
             Paragraph(
                 str(summary["total_due_months"]),
                 summary_value_style
+            ),
+            Paragraph(
+                str(summary["total_due_amount_sum"]),
+                summary_value_style
             )
         ]
     ]
@@ -189,9 +203,10 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
     summary_table = Table(
         summary_data,
         colWidths=[
-            58 * mm,
-            58 * mm,
-            58 * mm
+            50 * mm,
+            50 * mm,
+            50 * mm,
+            50 * mm
         ]
     )
 
@@ -246,7 +261,8 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
         Paragraph("#", header_style),
         Paragraph("Member", header_style),
         Paragraph("Due Months", header_style),
-        Paragraph("Due Month List", header_style)
+        Paragraph("Due Month List", header_style),
+        Paragraph("Due Amount", header_style)
     ])
 
     # --------------------------------------------------
@@ -296,6 +312,10 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
             Paragraph(
                 month_text,
                 month_style
+            ),
+            Paragraph(
+                str(member["total_due_amount"]),
+                amount_style
             )
         ])
 
@@ -309,7 +329,8 @@ def generate_imam_contri_due_pdf(year, report_data, summary):
             10 * mm,     # #
             63 * mm,     # Member
             25 * mm,     # Due Months
-            83 * mm      # Due Month List
+            83 * mm,     # Due Month List
+            25 * mm      # Total Due Amount
         ],
         repeatRows=1
     )

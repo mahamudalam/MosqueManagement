@@ -28,6 +28,85 @@
 
                 <div class="row">
 
+                    <!-- Friday Member Contribution Summary -->
+                    <div id="fridayMemberSummary"class="col-12 mt-3"style="display: none;">
+
+                        <div class="card border-warning shadow-sm">
+
+                            <div class="card-header bg-warning-subtle fw-bold">
+                                <i class="fa fa-calendar-alt me-2"></i>
+                                Member Friday Contribution Details
+                            </div>
+
+                            <div class="card-body">
+
+                                <!-- Due Summary -->
+                                <div class="row">
+
+                                    <div class="col-6 mb-3">
+                                        <label class="text-muted small">Total Due Fridays</label>
+                                        <h4 class="text-danger mb-0">
+                                            <span id="fridayDueCount">0</span> Fridays
+                                        </h4>
+                                    </div>
+
+                                    <div class="col-6 mb-3">
+                                        <label class="text-muted small">Total Paid Fridays</label>
+                                        <h4 class="text-success mb-0">
+                                            <span id="fridayPaidCount">0</span> Fridays
+                                        </h4>
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <!-- Pending Fridays -->
+                                <label class="fw-bold mb-2">
+                                    <i class="fa fa-exclamation-circle text-danger me-1"></i>
+                                    Pending Friday Dates
+                                </label>
+
+                                <div id="fridayDueDates" class="d-flex flex-wrap gap-2">
+                                </div>
+
+                                <hr>
+
+                                <!-- Advance Summary -->
+                                <div class="row">
+
+                                    <div class="col-6 mb-3">
+                                        <label class="text-muted small">Advance Paid Count</label>
+                                        <h4 class="text-success mb-0">
+                                            <span id="fridayAdvanceCount">0</span> Fridays
+                                        </h4>
+                                    </div>
+
+                                    <!--<div class="col-6 mb-3">
+                                        <label class="text-muted small">Advance Amount</label>
+                                        <h4 class="text-success mb-0">
+                                            ₹ <span id="fridayAdvanceAmount">0.00</span>
+                                        </h4>
+                                    </div>-->
+
+                                </div>
+
+                                <!-- Advance Dates -->
+                                <label class="fw-bold mb-2">
+                                    <i class="fa fa-check-circle text-success me-1"></i>
+                                    Advance Paid Friday Dates
+                                </label>
+
+                                <div id="fridayAdvanceDates" class="d-flex flex-wrap gap-2">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
                     <!-- Member -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label class="form-label fw-bold">
@@ -126,8 +205,10 @@
 
                         <input
                             type="date"
+                            id="contribution_date"
                             name="contribution_date"
                             class="form-control"
+                            value="{{ today_date }}"
                             required>
 
                     </div>                    
@@ -176,29 +257,85 @@
 
     </div>
 
+    
     <!-- Contribution History -->
     <div class="card shadow-sm border-0">
 
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
 
             <span>
-
                 <i class="fa fa-history me-2"></i>
-
                 Contribution History
-
             </span>
 
+            <button class="btn btn-success"
+                    type="button"
+                    id="toggleFridayFilter">
+
+                <i class="fa fa-filter me-1"></i>
+                Show Contribution
+
+            </button>
+
             <span class="badge bg-light text-primary">
-
-                Total Records : {{ donations|length }}
-
+                Total Records: {{ donations|length }}
             </span>
 
         </div>
 
         <div class="card-body">
 
+            <!-- Date Filter: Initially Hidden -->
+            <div id="fridayFilterSection" style="display:none;">
+
+                <div class="row mb-3">
+
+                    <div class="col-lg-4 col-md-6 mb-2">
+
+                        <label class="form-label fw-bold">
+                            <i class="fa fa-calendar me-1"></i>
+                            Select Contribution Date
+                        </label>
+
+                        <input type="date"
+                            id="fridayHistoryDate"
+                            class="form-control">
+
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
+
+                        <button type="button"
+                                class="btn btn-primary w-100"
+                                id="filterFridayBtn">
+
+                            <i class="fa fa-filter me-1"></i>
+                            Filter
+
+                        </button>
+
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
+
+                        <button type="button"
+                                class="btn btn-secondary w-100"
+                                id="resetFridayFilter">
+
+                            <i class="fa fa-refresh me-1"></i>
+                            Reset
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+            </div>
+
+            <!-- Contribution Table: Always Visible -->
             <div class="table-responsive">
 
                 <table class="table table-bordered table-hover align-middle">
@@ -206,19 +343,12 @@
                     <thead class="table-primary">
 
                         <tr>
-
                             <th>Date</th>
-
                             <th>Member</th>
-
                             <th>Contribution Date</th>
-
                             <th class="text-end">Amount</th>
-
                             <th>Contribution Mode</th>
-
                             <th>Remarks</th>
-
                         </tr>
 
                     </thead>
@@ -229,30 +359,24 @@
 
                             {% for d in donations %}
 
-                            <tr>
+                            <tr class="friday-contribution-row"
+                                data-date="{{ d.contribution_date.strftime('%Y-%m-%d') }}"
+                                data-amount="{{ d.amount or 0 }}">
 
                                 <td>
-
                                     {{ d.donation_date.strftime('%d-%b-%Y') }}
-
                                 </td>
 
                                 <td>
-
                                     {{ d.member.name }}
-
                                 </td>
 
                                 <td>
-
                                     {{ d.contribution_date.strftime('%d-%b-%Y') }}
-
                                 </td>
 
                                 <td class="text-end">
-
-                                    ₹ {{ "{:,.2f}".format(d.amount) }}
-
+                                    ₹ {{ "{:,.2f}".format(d.amount or 0) }}
                                 </td>
 
                                 <td>
@@ -260,9 +384,7 @@
                                 </td>
 
                                 <td>
-
                                     {{ d.remarks or "-" }}
-
                                 </td>
 
                             </tr>
@@ -272,21 +394,49 @@
                         {% else %}
 
                             <tr>
-
-                                <td colspan="4"
+                                <td colspan="6"
                                     class="text-center text-muted py-4">
 
+                                    <i class="fa fa-inbox fa-2x mb-2"></i>
+                                    <br>
                                     No contribution records found.
 
                                 </td>
-
                             </tr>
 
                         {% endif %}
 
                     </tbody>
 
+                    <tfoot class="table-secondary">
+
+                        <tr>
+
+                            <th colspan="3" class="text-end">
+                                Total Contribution
+                            </th>
+
+                            <th class="text-end">
+                                ₹ <span id="fridayFilteredTotal">
+                                    {{ "{:,.2f}".format(total_amount or 0) }}
+                                </span>
+                            </th>
+
+                            <th colspan="2"></th>
+
+                        </tr>
+
+                    </tfoot>
+
                 </table>
+
+            </div>
+
+            <div id="noFridayContributionFound"
+                class="alert alert-warning text-center"
+                style="display:none;">
+
+                No contributions found for the selected date.
 
             </div>
 
@@ -294,6 +444,245 @@
 
     </div>
 
+
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggleBtn = document.getElementById("toggleFridayFilter");
+    const filterSection = document.getElementById("fridayFilterSection");
+
+    const dateInput = document.getElementById("fridayHistoryDate");
+    const filterBtn = document.getElementById("filterFridayBtn");
+    const resetBtn = document.getElementById("resetFridayFilter");
+
+    const rows = document.querySelectorAll(".friday-contribution-row");
+
+    const totalElement = document.getElementById("fridayFilteredTotal");
+    const noRecords = document.getElementById("noFridayContributionFound");
+
+    if (!toggleBtn || !filterSection) {
+        console.error("Friday history filter elements not found.");
+        return;
+    }
+
+    // Show / Hide filter options
+    toggleBtn.addEventListener("click", function () {
+
+        const isHidden = filterSection.style.display === "none";
+
+        filterSection.style.display = isHidden ? "block" : "none";
+
+        toggleBtn.innerHTML = isHidden
+            ? '<i class="fa fa-eye-slash me-1"></i> Hide Filter'
+            : '<i class="fa fa-filter me-1"></i> Show Contribution';
+
+    });
+
+    // Filter contributions by selected date
+    function filterFridayContributions() {
+
+        const selectedDate = dateInput.value;
+
+        let total = 0;
+        let visibleCount = 0;
+
+        rows.forEach(function (row) {
+
+            const rowDate = row.dataset.date;
+            const amount = parseFloat(row.dataset.amount) || 0;
+
+            const showRow =
+                !selectedDate || rowDate === selectedDate;
+
+            row.style.display = showRow ? "" : "none";
+
+            if (showRow) {
+
+                total += amount;
+                visibleCount++;
+
+            }
+
+        });
+
+        totalElement.textContent = total.toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        noRecords.style.display =
+            visibleCount === 0 ? "block" : "none";
+
+    }
+
+    // Filter button
+    filterBtn.addEventListener("click", function () {
+        filterFridayContributions();
+    });
+
+    // Automatically filter when date changes
+    dateInput.addEventListener("change", function () {
+        filterFridayContributions();
+    });
+
+    // Reset filter
+    resetBtn.addEventListener("click", function () {
+
+        dateInput.value = "";
+
+        filterFridayContributions();
+
+    });
+
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("Friday Contribution script loaded");
+
+    const memberDropdown = document.getElementById("member");
+    const monthInput = document.getElementById("month");
+    const summary = document.getElementById("fridayMemberSummary");
+
+    if (!memberDropdown) {
+        console.error("Member dropdown not found!");
+        return;
+    }
+
+    if (!summary) {
+        console.error("Friday summary container not found!");
+        return;
+    }
+
+    async function loadFridaySummary() {
+
+        const memberId = memberDropdown.value;
+
+        console.log("Selected Member ID:", memberId);
+
+        if (!memberId) {
+            summary.style.display = "none";
+            return;
+        }
+
+        const selectedYear = monthInput && monthInput.value
+            ? monthInput.value.split("-")[0]
+            : new Date().getFullYear();
+
+        const apiUrl =
+            `/get-member-friday-contribution/${memberId}?year=${selectedYear}`;
+
+        //console.log("Calling API:", apiUrl);
+
+        try {
+
+            const response = await fetch(apiUrl);
+
+            console.log("API Status:", response.status);
+
+            const data = await response.json();
+
+            console.log("API Response:", data);
+
+            if (!response.ok || !data.success) {
+                console.error(
+                    "Unable to load Friday summary:",
+                    data.message
+                );
+                return;
+            }
+
+            // Update counts
+            document.getElementById("fridayDueCount").textContent =
+                data.due_count ?? 0;
+
+            document.getElementById("fridayPaidCount").textContent =
+                data.paid_count ?? 0;
+
+            document.getElementById("fridayAdvanceCount").textContent =
+                data.advance_count ?? 0;
+
+            //document.getElementById("fridayAdvanceAmount").textContent =
+              //  Number(data.advance_amount ?? 0).toFixed(2);
+
+            // Update due dates
+            const dueDates =
+                document.getElementById("fridayDueDates");
+
+            dueDates.innerHTML = "";
+
+            (data.due_dates || []).forEach(function (date) {
+
+                const badge = document.createElement("span");
+
+                badge.className = "badge bg-danger p-2 me-1 mb-1";
+                badge.textContent = date;
+
+                dueDates.appendChild(badge);
+
+            });
+
+            if (!data.due_dates || data.due_dates.length === 0) {
+                dueDates.textContent = "No pending Fridays";
+            }
+
+            // Update advance dates
+            const advanceDates =
+                document.getElementById("fridayAdvanceDates");
+
+            advanceDates.innerHTML = "";
+
+            (data.advance_dates || []).forEach(function (date) {
+
+                const badge = document.createElement("span");
+
+                badge.className = "badge bg-success p-2 me-1 mb-1";
+                badge.textContent = date;
+
+                advanceDates.appendChild(badge);
+
+            });
+
+            if (!data.advance_dates || data.advance_dates.length === 0) {
+                advanceDates.textContent = "No advance payments";
+            }
+
+            summary.style.display = "block";
+
+        } catch (error) {
+
+            console.error("Friday Summary Error:", error);
+
+        }
+    }
+
+    // Select2-compatible member selection event
+    if (window.jQuery) {
+
+        $('#member').on('change', function () {
+            //console.log("Member selection changed");
+            loadFridaySummary();
+        });
+
+    } else {
+
+        memberDropdown.addEventListener("change", loadFridaySummary);
+
+    }
+
+    // Reload summary when month/year changes
+    if (monthInput) {
+        monthInput.addEventListener("change", loadFridaySummary);
+    }
+
+});
+</script>
+
 
 {% endblock %}
