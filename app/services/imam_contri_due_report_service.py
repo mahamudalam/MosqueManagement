@@ -112,7 +112,7 @@ class ImamContriDueReportService:
                     f"{item['year']}"
                     for item in due_months
                 ],
-
+                "total_due_amount": sum(item["due_amount"] for item in due_months),
                 # Keep detailed information available
                 # for future PDF/report enhancements.
                 "details": due_months
@@ -135,5 +135,9 @@ class ImamContriDueReportService:
 
         self.summary["total_due_months"] = sum(
             item["due_count"]
+            for item in self.report_data
+        )
+        self.summary["total_due_amount_sum"] = sum(
+            item["total_due_amount"]
             for item in self.report_data
         )

@@ -532,8 +532,12 @@ setTimeout(function () {
             year: 'numeric'
         };
 
-        document.getElementById("todayDate").innerHTML =
-        new Date().toLocaleDateString('en-IN', options);
+        const todayDateElement = document.getElementById("todayDate");
+
+        if (todayDateElement) {
+            todayDateElement.innerHTML =
+                new Date().toLocaleDateString('en-IN', options);
+        }
 
         </script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>    
@@ -541,5 +545,6 @@ setTimeout(function () {
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ url_for('static', filename='js/member.js') }}"></script>    
 <script src="{{ url_for('static', filename='js/friday.js') }}"></script>
+
 </body>
 </html>

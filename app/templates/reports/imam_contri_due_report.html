@@ -160,6 +160,26 @@
             </div>
 
         </div>
+        <!-- Total Due Amount -->
+        <div class="col-12 col-md-4 mb-3">
+
+            <div class="card border-info shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">
+                        Total Due Amount
+                    </h6>
+
+                    <h3 class="text-info">
+                        {{ summary.total_due_amount_sum }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>        
 
     </div>
 
@@ -202,6 +222,9 @@
 
                                 <th>
                                     Due Month List
+                                </th>
+                                <th>
+                                    Due Amount
                                 </th>
 
                             </tr>
@@ -246,6 +269,13 @@
                                             {% endfor %}
 
                                         </div>
+
+                                    </td>
+                                     <td>
+
+                                        <span class="badge bg-danger">
+                                            {{ member.total_due_amount }}
+                                        </span>
 
                                     </td>
 
