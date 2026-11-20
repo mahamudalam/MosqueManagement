@@ -270,85 +270,110 @@
 
     
 
+
 <!-- Contribution History -->
 <div class="card shadow-sm border-0">
 
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center flex-wrap gap-2">
 
         <span>
             <i class="fa fa-history me-2"></i>
             Contribution History
         </span>
 
-        <button class="btn btn-success"
-                type="button"
-                id="toggleContributionFilter">
+        <div class="d-flex align-items-center gap-2">
 
-            <i class="fa fa-filter me-1"></i>
-            Show Contribution
+            <button class="btn btn-success"
+                    type="button"
+                    id="toggleContributionFilter">
 
-        </button>
+                <i class="fa fa-filter me-1"></i>
+                Show Filter
 
-        <span class="badge bg-light text-primary">
-            Total Records: {{ contributions|length }}
-        </span>
+            </button>
+
+            <span class="badge bg-light text-primary">
+                Total Records: {{ contributions|length }}
+            </span>
+
+        </div>
 
     </div>
 
     <div class="card-body">
 
-        <!-- Initially Hidden Filter Section -->
+        <!-- Database Date Filter -->
         <div id="contributionFilterSection"
+             class="border rounded p-3 mb-3"
              style="display:none;">
 
-            <div class="row mb-4">
+            <form method="GET"
+                  action="{{ url_for('salary.imam_salary') }}">
 
-                <div class="col-lg-4 col-md-6 mb-2">
+                <div class="row align-items-end">
 
-                    <label class="form-label fw-bold">
-                        <i class="fa fa-calendar me-1"></i>
-                        Select Contribution Date
-                    </label>
+                    <div class="col-lg-4 col-md-6 mb-2">
 
-                    <input type="date"
-                           id="historyContributionDate"
-                           class="form-control">
+                        <label class="form-label fw-bold">
+                            <i class="fa fa-calendar me-1"></i>
+                            Select Contribution Date
+                        </label>
+
+                        <input type="date"
+                               name="contribution_date"
+                               class="form-control"
+                               value="{{ selected_contribution_date or '' }}"
+                               required>
+
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 mb-2">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="fa fa-filter me-1"></i>
+                            Filter
+
+                        </button>
+
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 mb-2">
+
+                        <a href="{{ url_for('salary.imam_salary') }}"
+                           class="btn btn-secondary w-100">
+
+                            <i class="fa fa-refresh me-1"></i>
+                            Reset
+
+                        </a>
+
+                    </div>
 
                 </div>
 
-                <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
-
-                    <button type="button"
-                            class="btn btn-primary w-100"
-                            id="filterContributionBtn">
-
-                        <i class="fa fa-filter me-1"></i>
-                        Filter
-
-                    </button>
-
-                </div>
-
-                <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
-
-                    <button type="button"
-                            class="btn btn-secondary w-100"
-                            id="resetContributionFilter">
-
-                        <i class="fa fa-refresh me-1"></i>
-                        Reset
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            <hr>
+            </form>
 
         </div>
 
-        <!-- Contribution Table: Always Visible -->
+        <!-- Filter Information -->
+        {% if selected_contribution_date %}
+
+            <div class="alert alert-info py-2">
+                Showing contributions for:
+                <strong>{{ selected_contribution_date }}</strong>
+            </div>
+
+        {% else %}
+
+            <div class="text-muted small mb-2">
+                Showing the latest 50 records.
+            </div>
+
+        {% endif %}
+
+        <!-- Contribution Table -->
         <div class="table-responsive">
 
             <table class="table table-hover table-bordered align-middle">
@@ -368,59 +393,55 @@
 
                 <tbody>
 
-                    {% if contributions %}
+                    {% for c in contributions %}
 
-                        {% for c in contributions %}
+                    <tr>
 
-                        <tr class="contribution-row"
-                            data-date="{{ c.contribution_date.strftime('%Y-%m-%d') }}"
-                            data-amount="{{ c.amount }}">
+                        <td>{{ c.member.name }}</td>
 
-                            <td>{{ c.member.name }}</td>
+                        <td>{{ months[c.salary_month-1][1] }}</td>
 
-                            <td>{{ months[c.salary_month-1][1] }}</td>
+                        <td>{{ c.salary_year }}</td>
 
-                            <td>{{ c.salary_year }}</td>
+                        <td>
+                            {{ c.contribution_date.strftime("%d-%b-%Y") if c.contribution_date else '-' }}
+                        </td>
 
-                            <td>{{ c.contribution_date.strftime("%d-%b-%Y") }}</td>
+                        <td class="text-end">
+                            ₹ {{ "{:,.2f}".format(c.amount or 0) }}
+                        </td>
 
-                            <td class="text-end">
-                                ₹ {{ "{:,.2f}".format(c.amount) }}
-                            </td>
+                        <td>{{ c.remarks or "-" }}</td>
 
-                            <td>{{ c.remarks or "-" }}</td>
-
-                        </tr>
-
-                        {% endfor %}
+                    </tr>
 
                     {% else %}
 
-                        <tr>
-                            <td colspan="6"
-                                class="text-center text-muted py-4">
-                                No contribution records found.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6"
+                            class="text-center text-muted py-4">
+                            No contribution records found.
+                        </td>
+                    </tr>
 
-                    {% endif %}
+                    {% endfor %}
 
                 </tbody>
 
                 <tfoot class="table-secondary">
 
                     <tr>
+
                         <th colspan="4" class="text-end">
                             Total Contribution
                         </th>
 
                         <th class="text-end">
-                            ₹ <span id="filteredContributionTotal">
-                                {{ "{:,.2f}".format(total_amount or 0) }}
-                            </span>
+                            ₹ {{ "{:,.2f}".format(total_amount or 0) }}
                         </th>
 
                         <th></th>
+
                     </tr>
 
                 </tfoot>
@@ -429,12 +450,8 @@
 
         </div>
 
-        <div id="noContributionFound"
-             class="alert alert-warning text-center"
-             style="display:none;">
-
-            No contributions found for the selected date.
-
+        <div class="text-muted small">
+            Total records displayed: {{ contributions|length }}
         </div>
 
     </div>
@@ -444,80 +461,56 @@
 
 
 <script>
+
+// 1. Refresh filtered page: return to latest 50 records
+(function () {
+
+    const navigationEntry =
+        performance.getEntriesByType("navigation")[0];
+
+    if (navigationEntry && navigationEntry.type === "reload") {
+
+        const url = new URL(window.location.href);
+
+        if (url.searchParams.has("contribution_date")) {
+
+            window.location.replace(url.pathname);
+
+        }
+    }
+
+})();
+
+
+// 2. Show / Hide Filter
 document.addEventListener("DOMContentLoaded", function () {
 
-    const toggleBtn = document.getElementById("toggleContributionFilter");
-    const filterSection = document.getElementById("contributionFilterSection");
+    const toggleBtn =
+        document.getElementById("toggleContributionFilter");
 
-    const dateInput = document.getElementById("historyContributionDate");
-    const filterBtn = document.getElementById("filterContributionBtn");
-    const resetBtn = document.getElementById("resetContributionFilter");
+    const filterSection =
+        document.getElementById("contributionFilterSection");
 
-    const rows = document.querySelectorAll(".contribution-row");
-    const totalElement = document.getElementById("filteredContributionTotal");
-    const noRecords = document.getElementById("noContributionFound");
+    if (!toggleBtn || !filterSection) return;
 
-    // Show / Hide filter options
     toggleBtn.addEventListener("click", function () {
 
-        const isHidden = filterSection.style.display === "none";
+        const isHidden =
+            window.getComputedStyle(filterSection).display === "none";
 
-        filterSection.style.display = isHidden ? "block" : "none";
+        filterSection.style.display =
+            isHidden ? "block" : "none";
 
         toggleBtn.innerHTML = isHidden
             ? '<i class="fa fa-eye-slash me-1"></i> Hide Filter'
-            : '<i class="fa fa-filter me-1"></i> Show Contribution';
-
-    });
-
-    // Filter contributions by date
-    function filterContributions() {
-
-        const selectedDate = dateInput.value;
-
-        let total = 0;
-        let visibleCount = 0;
-
-        rows.forEach(function (row) {
-
-            const rowDate = row.dataset.date;
-            const amount = parseFloat(row.dataset.amount) || 0;
-
-            const showRow = !selectedDate || rowDate === selectedDate;
-
-            row.style.display = showRow ? "" : "none";
-
-            if (showRow) {
-                total += amount;
-                visibleCount++;
-            }
-
-        });
-
-        totalElement.textContent = total.toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-
-        noRecords.style.display = visibleCount === 0 ? "block" : "none";
-
-    }
-
-    filterBtn.addEventListener("click", filterContributions);
-
-    dateInput.addEventListener("change", filterContributions);
-
-    // Reset all records
-    resetBtn.addEventListener("click", function () {
-
-        dateInput.value = "";
-
-        filterContributions();
+            : '<i class="fa fa-filter me-1"></i> Show Filter';
 
     });
 
 });
+
 </script>
+
 
 <script>
 
