@@ -100,6 +100,48 @@ def imam_salary():
     members = Member.query.order_by(Member.name).all()
     contributions = ImamSalaryContribution.query.order_by(ImamSalaryContribution.id.desc()).limit(50).all()
     total_amount = sum(c.amount for c in contributions)
+    # -----------------------------------------
+    # GET: Contribution History
+    # -----------------------------------------
+
+    members = Member.query.order_by(Member.name).all()
+
+    selected_contribution_date = request.args.get(
+        "contribution_date", ""
+    ).strip()
+
+    if selected_contribution_date:
+
+        try:
+            filter_date = date.fromisoformat(
+                selected_contribution_date
+            )
+
+            # Fetch ALL matching records from database
+            contributions = ImamSalaryContribution.query.filter(
+                ImamSalaryContribution.contribution_date == filter_date
+            ).order_by(
+                ImamSalaryContribution.id.desc()
+            ).all()
+
+        except ValueError:
+            flash("Invalid contribution date.", "warning")
+            selected_contribution_date = ""
+
+            contributions = ImamSalaryContribution.query.order_by(
+                ImamSalaryContribution.id.desc()
+            ).limit(50).all()
+
+    else:
+        # Initial page load and Reset: latest 50 records
+        contributions = ImamSalaryContribution.query.order_by(
+            ImamSalaryContribution.id.desc()
+        ).limit(50).all()
+
+    # Calculate total for displayed records
+    total_amount = sum(
+        (c.amount or Decimal("0")) for c in contributions
+    )
 
     return render_template(
         "salary/Imam_salary_contribution.html",
@@ -108,7 +150,8 @@ def imam_salary():
         total_amount=total_amount,
         months=MONTHS,
         current_date=date.today().isoformat(),
-        current_year=datetime.today().year
+        current_year=datetime.today().year,
+        selected_contribution_date=selected_contribution_date
     )
 
 

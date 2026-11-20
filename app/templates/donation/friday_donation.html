@@ -258,172 +258,152 @@
     </div>
 
     
-    <!-- Contribution History -->
-    <div class="card shadow-sm border-0">
+    
+    <!-- Friday Contribution History -->
+    <div class="card shadow-sm border-0 mt-4 mb-4">
 
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
 
-            <span>
+            <h5 class="mb-0">
                 <i class="fa fa-history me-2"></i>
-                Contribution History
-            </span>
+                Friday Contribution History
+            </h5>
 
-            <button class="btn btn-success"
-                    type="button"
+            <button type="button"
+                    class="btn btn-light btn-sm"
                     id="toggleFridayFilter">
-
-                <i class="fa fa-filter me-1"></i>
-                Show Contribution
-
+                <i class="fa fa-filter me-1"></i> Show Filter
             </button>
-
-            <span class="badge bg-light text-primary">
-                Total Records: {{ donations|length }}
-            </span>
 
         </div>
 
         <div class="card-body">
 
-            <!-- Date Filter: Initially Hidden -->
-            <div id="fridayFilterSection" style="display:none;">
+            <!-- Database Date Filter -->
+            <div id="fridayFilterSection"
+                class="border rounded p-3 mb-3"
+                style="display:none;">
 
-                <div class="row mb-3">
+                <form method="GET"
+                    action="{{ url_for('friday.friday_donation') }}">
 
-                    <div class="col-lg-4 col-md-6 mb-2">
+                    <div class="row align-items-end">
 
-                        <label class="form-label fw-bold">
-                            <i class="fa fa-calendar me-1"></i>
-                            Select Contribution Date
-                        </label>
+                        <div class="col-md-4 mb-2">
 
-                        <input type="date"
-                            id="fridayHistoryDate"
-                            class="form-control">
+                            <label class="form-label fw-bold">
+                                Contribution Date
+                            </label>
 
-                    </div>
+                            <input type="date"
+                                name="contribution_date"
+                                class="form-control"
+                                value="{{ selected_contribution_date or '' }}"
+                                required>
 
-                    <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
+                        </div>
 
-                        <button type="button"
-                                class="btn btn-primary w-100"
-                                id="filterFridayBtn">
+                        <div class="col-md-4 mb-2">
 
-                            <i class="fa fa-filter me-1"></i>
-                            Filter
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-search me-1"></i>
+                                Filter
+                            </button>
 
-                        </button>
+                            <a href="{{ url_for('friday.friday_donation') }}"
+                            class="btn btn-secondary">
+                                <i class="fa fa-refresh me-1"></i>
+                                Reset
+                            </a>
 
-                    </div>
-
-                    <div class="col-lg-2 col-md-3 d-flex align-items-end mb-2">
-
-                        <button type="button"
-                                class="btn btn-secondary w-100"
-                                id="resetFridayFilter">
-
-                            <i class="fa fa-refresh me-1"></i>
-                            Reset
-
-                        </button>
+                        </div>
 
                     </div>
 
-                </div>
-
-                <hr>
+                </form>
 
             </div>
 
-            <!-- Contribution Table: Always Visible -->
+            <!-- Active Filter Information -->
+            {% if selected_contribution_date %}
+            <div class="alert alert-info py-2">
+                Showing records for contribution date:
+                <strong>{{ selected_contribution_date }}</strong>
+            </div>
+            {% else %}
+            <div class="text-muted small mb-2">
+                Showing the latest 50 records.
+            </div>
+            {% endif %}
+
+            <!-- History Table -->
             <div class="table-responsive">
 
                 <table class="table table-bordered table-hover align-middle">
 
-                    <thead class="table-primary">
-
+                    <thead class="table-light">
                         <tr>
-                            <th>Date</th>
+                            <th>Friday Date</th>
                             <th>Member</th>
                             <th>Contribution Date</th>
-                            <th class="text-end">Amount</th>
+                            <th>Amount (₹)</th>
                             <th>Contribution Mode</th>
                             <th>Remarks</th>
                         </tr>
-
                     </thead>
 
                     <tbody>
 
-                        {% if donations %}
+                        {% for d in donations %}
 
-                            {% for d in donations %}
+                        <tr>
+                            <td>
+                                {{ d.donation_date.strftime('%d-%b-%Y') }}
+                            </td>
 
-                            <tr class="friday-contribution-row"
-                                data-date="{{ d.contribution_date.strftime('%Y-%m-%d') }}"
-                                data-amount="{{ d.amount or 0 }}">
+                            <td>
+                                {{ d.member.name }}
+                            </td>
 
-                                <td>
-                                    {{ d.donation_date.strftime('%d-%b-%Y') }}
-                                </td>
+                            <td>
+                                {{ d.contribution_date.strftime('%d-%b-%Y') if d.contribution_date else '-' }}
+                            </td>
 
-                                <td>
-                                    {{ d.member.name }}
-                                </td>
-
-                                <td>
-                                    {{ d.contribution_date.strftime('%d-%b-%Y') }}
-                                </td>
-
-                                <td class="text-end">
-                                    ₹ {{ "{:,.2f}".format(d.amount or 0) }}
-                                </td>
+                            <td>
+                                {{ "{:,.2f}".format(d.amount or 0) }}
+                            </td>
 
                                 <td>
-                                    {{ d.contribution_mode.value if d.contribution_mode else "-" }}
+                                    {{ d.contribution_mode.value if d.contribution_mode else '-' }}
                                 </td>
 
-                                <td>
-                                    {{ d.remarks or "-" }}
-                                </td>
-
-                            </tr>
-
-                            {% endfor %}
+                            <td>
+                                {{ d.remarks or '-' }}
+                            </td>
+                        </tr>
 
                         {% else %}
 
-                            <tr>
-                                <td colspan="6"
-                                    class="text-center text-muted py-4">
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                No Friday contributions found.
+                            </td>
+                        </tr>
 
-                                    <i class="fa fa-inbox fa-2x mb-2"></i>
-                                    <br>
-                                    No contribution records found.
-
-                                </td>
-                            </tr>
-
-                        {% endif %}
+                        {% endfor %}
 
                     </tbody>
 
-                    <tfoot class="table-secondary">
+                    <tfoot class="table-light fw-bold">
 
                         <tr>
+                            <td colspan="3" class="text-end">
+                                Total Amount:
+                            </td>
 
-                            <th colspan="3" class="text-end">
-                                Total Contribution
-                            </th>
-
-                            <th class="text-end">
-                                ₹ <span id="fridayFilteredTotal">
-                                    {{ "{:,.2f}".format(total_amount or 0) }}
-                                </span>
-                            </th>
-
-                            <th colspan="2"></th>
-
+                            <td colspan="3">
+                                ₹ {{ "{:,.2f}".format(total_amount or 0) }}
+                            </td>
                         </tr>
 
                     </tfoot>
@@ -432,12 +412,8 @@
 
             </div>
 
-            <div id="noFridayContributionFound"
-                class="alert alert-warning text-center"
-                style="display:none;">
-
-                No contributions found for the selected date.
-
+            <div class="text-muted small">
+                Total records displayed: {{ donations|length }}
             </div>
 
         </div>
@@ -445,99 +421,51 @@
     </div>
 
 
+
 </div>
 
 
 <script>
+
+// 1. On page refresh, remove date filter and show latest 50 records
+(function () {
+
+    const navigationEntry = performance.getEntriesByType("navigation")[0];
+
+    if (navigationEntry && navigationEntry.type === "reload") {
+
+        const url = new URL(window.location.href);
+
+        if (url.searchParams.has("contribution_date")) {
+            window.location.replace(url.pathname);
+        }
+    }
+
+})();
+
+
+// 2. Show / Hide Filter
 document.addEventListener("DOMContentLoaded", function () {
 
     const toggleBtn = document.getElementById("toggleFridayFilter");
     const filterSection = document.getElementById("fridayFilterSection");
 
-    const dateInput = document.getElementById("fridayHistoryDate");
-    const filterBtn = document.getElementById("filterFridayBtn");
-    const resetBtn = document.getElementById("resetFridayFilter");
+    if (!toggleBtn || !filterSection) return;
 
-    const rows = document.querySelectorAll(".friday-contribution-row");
-
-    const totalElement = document.getElementById("fridayFilteredTotal");
-    const noRecords = document.getElementById("noFridayContributionFound");
-
-    if (!toggleBtn || !filterSection) {
-        console.error("Friday history filter elements not found.");
-        return;
-    }
-
-    // Show / Hide filter options
     toggleBtn.addEventListener("click", function () {
 
-        const isHidden = filterSection.style.display === "none";
+        const isHidden = window.getComputedStyle(filterSection).display === "none";
 
         filterSection.style.display = isHidden ? "block" : "none";
 
         toggleBtn.innerHTML = isHidden
             ? '<i class="fa fa-eye-slash me-1"></i> Hide Filter'
-            : '<i class="fa fa-filter me-1"></i> Show Contribution';
-
-    });
-
-    // Filter contributions by selected date
-    function filterFridayContributions() {
-
-        const selectedDate = dateInput.value;
-
-        let total = 0;
-        let visibleCount = 0;
-
-        rows.forEach(function (row) {
-
-            const rowDate = row.dataset.date;
-            const amount = parseFloat(row.dataset.amount) || 0;
-
-            const showRow =
-                !selectedDate || rowDate === selectedDate;
-
-            row.style.display = showRow ? "" : "none";
-
-            if (showRow) {
-
-                total += amount;
-                visibleCount++;
-
-            }
-
-        });
-
-        totalElement.textContent = total.toLocaleString("en-IN", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-
-        noRecords.style.display =
-            visibleCount === 0 ? "block" : "none";
-
-    }
-
-    // Filter button
-    filterBtn.addEventListener("click", function () {
-        filterFridayContributions();
-    });
-
-    // Automatically filter when date changes
-    dateInput.addEventListener("change", function () {
-        filterFridayContributions();
-    });
-
-    // Reset filter
-    resetBtn.addEventListener("click", function () {
-
-        dateInput.value = "";
-
-        filterFridayContributions();
+            : '<i class="fa fa-filter me-1"></i> Show Filter';
 
     });
 
 });
+
 </script>
 
 
